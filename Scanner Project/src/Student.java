@@ -19,8 +19,43 @@ public class Student implements Comparable<Student>
 		return id;
 	}
 	
+	public String getFirst()
+	{
+		return firstName;
+	}
+	
+	public String getLast()
+	{
+		return lastName;
+	}
+	
+	public int getGrade()
+	{
+		return grade;
+	}
+	
+	public String getHomeroom()
+	{
+		return homeroom;
+	}
+	
+	public String getPassword()
+	{
+		return password;
+	}
+	
 	public int compareTo(Student student)
 	{
 		return id.compareTo(student.getId());
+	}
+	
+	public boolean equals(Student student)
+	{
+		return id.compareTo(student.getId()) == 0;
+	}
+	
+	public String toString()
+	{
+		return id;
 	}
 }
