@@ -1,26 +1,26 @@
-public class BinaryTree<E extends Comparable<E>>
+public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Value>>
 {
-	private BinaryTreeNode<E> root;
+	private BinaryTreeNode<Key, Value> root;
 
 	public BinaryTree()
 	{
 		root = null;
 	}
 
-	public boolean contains(E item)
+	public boolean containsKey(Key key)
 	{
-		return contains(item, root);
+		return containsKey(key, root);
 	}
 
-	private boolean contains(E item, BinaryTreeNode<E> node)
+	private boolean containsKey(Key key, BinaryTreeNode<Key, Value> node)
 	{
 		if (node == null)
 			return false;
-		if (node.getItem().equals(item))
+		if (node.getKey().equals(key))
 			return true;
-		if (node.getItem().compareTo(item) > 0)
-			return contains(item, node.getRight());
-		return contains(item, node.getLeft());
+		if (node.getKey().compareTo(key) > 0)
+			return containsKey(key, node.getRight());
+		return containsKey(key, node.getLeft());
 	}
 
 	public int size()
@@ -28,35 +28,35 @@ public class BinaryTree<E extends Comparable<E>>
 		return size(root);
 	}
 
-	public void add(E item)
+	public void add(Key key, Value value)
 	{
 		if (root == null)
-			root = new BinaryTreeNode<E>(item);
+			root = new BinaryTreeNode<Key, Value>(key, value);
 		else
-			add(item, root);
+			add(key, value, root);
 	}
 
-	private void add(E item, BinaryTreeNode<E> node)
+	private void add(Key key, Value value, BinaryTreeNode<Key, Value> node)
 	{
-		if (node.getItem().compareTo(item) < 0)
+		if (node.getKey().compareTo(key) < 0)
 		{
 			if (node.getRight() == null)
-				node.setRight(new BinaryTreeNode<E>(item));
+				node.setRight(new BinaryTreeNode<Key, Value>(key, value));
 			else
-				add(item, node.getRight());
+				add(key, value, node.getRight());
 		}
 		else
 		{
 			if (node.getLeft() == null)
-				node.setLeft(new BinaryTreeNode<E>(item));
+				node.setLeft(new BinaryTreeNode<Key, Value>(key, value));
 			else
-				add(item, node.getLeft());
+				add(key, value, node.getLeft());
 		}
 	}
 
-	private void add(BinaryTreeNode<E> insert, BinaryTreeNode<E> node)
+	private void add(BinaryTreeNode<Key, Value> insert, BinaryTreeNode<Key, Value> node)
 	{
-		if (node.getItem().compareTo(insert.getItem()) < 0)
+		if (node.getKey().compareTo(insert.getKey()) < 0)
 		{
 			if (node.getRight() == null)
 				node.setRight(insert);
@@ -72,7 +72,7 @@ public class BinaryTree<E extends Comparable<E>>
 		}
 	}
 
-	private int size(BinaryTreeNode<E> node)
+	private int size(BinaryTreeNode<Key, Value> node)
 	{
 		int ret = 1;
 		if (node.getLeft() != null)
@@ -82,32 +82,37 @@ public class BinaryTree<E extends Comparable<E>>
 		return ret;
 	}
 
-	public E get(E item)
+	/**
+	 * Returns the object associated with a given key
+	 * @param item 
+	 * @return
+	 */
+	public Value get(Key key)
 	{
-		if (contains(item))
-			return item;
+		if (containsKey(key))
+			return getValue(key, root);
 		return null;
 	}
 
-	public boolean remove(E item)
+	public boolean remove(Key key)
 	{
-		if (contains(item))
+		if (containsKey(key))
 		{
-			root = remove(item, root);
+			root = remove(key, root);
 			return true;
 		}
 		return false;
 	}
 
-	private BinaryTreeNode<E> remove(E item, BinaryTreeNode<E> node)
+	private BinaryTreeNode<Key, Value> remove(Key key, BinaryTreeNode<Key, Value> node)
 	{
 		if (node == null)
 			return null;
 
-		if (node.getItem().compareTo(item) > 0)
-			node.setRight(remove(item, node.getRight()));
-		else if (node.getItem().compareTo(item) < 0)
-			node.setLeft(remove(item, node.getLeft()));
+		if (node.getKey().compareTo(key) > 0)
+			node.setRight(remove(key, node.getRight()));
+		else if (node.getKey().compareTo(key) < 0)
+			node.setLeft(remove(key, node.getLeft()));
 		else
 		{
 			if (node.getRight() == null && node.getLeft() == null)

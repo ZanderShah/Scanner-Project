@@ -1,44 +1,56 @@
-public class BinaryTreeNode<E extends Comparable<E>>
+public class BinaryTreeNode<Key extends Comparable<Key>, Value extends Comparable<Value>>
 {
-	private E item;
-	private BinaryTreeNode<E> left, right;
+	private Key key;
+	private Value value;
+	private BinaryTreeNode<Key, Value> left, right;
 
-	public BinaryTreeNode(E item)
+	public BinaryTreeNode(Key key, Value value)
 	{
-		this.item = item;
+		this.key = key;
+		this.value = value;
 		left = right = null;
 	}
 	
-	public BinaryTreeNode<E> getLeft()
+	public BinaryTreeNode<Key, Value> getLeft()
 	{
 		return left;
 	}
 	
-	public BinaryTreeNode<E> getRight()
+	public BinaryTreeNode<Key, Value> getRight()
 	{
 		return right;
 	}
 	
-	public void setLeft(BinaryTreeNode<E> left)
+	public void setLeft(BinaryTreeNode<Key, Value> left)
 	{
 		this.left = left;
 	}
 	
-	public void setRight(BinaryTreeNode<E> right)
+	public void setRight(BinaryTreeNode<Key, Value> right)
 	{
 		this.right = right;
 	}
 	
-	public E getItem()
+	public Value getValue()
 	{
-		return item;
+		return value;
 	}
 	
-	public void setItem(E item)
+	public void setValue(Value newValue)
 	{
-		this.item = item;
+		value = newValue;
 	}
 	
+	public Key getKey()
+	{
+		return key;
+	}
+	
+	public void setKey(Key newKey)
+	{
+		key = newKey;
+	}
+
 	public boolean isLeaf()
 	{
 		return left == null && right == null;
@@ -46,6 +58,6 @@ public class BinaryTreeNode<E extends Comparable<E>>
 	
 	public String toString()
 	{
-		return item + "";
+		return key.toString();
 	}
 }
