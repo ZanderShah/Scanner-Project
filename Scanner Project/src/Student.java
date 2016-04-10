@@ -3,6 +3,11 @@ public class Student implements Comparable<Student>
 	private String id, firstName, lastName, grade, homeroom, password, email,
 			address, p1, p2, p3, p4, p5;
 
+	/**
+	 * Construts a student object from information read in from the csv file
+	 * @param data information for the student (null if the file does not 
+	 * contain the piece of information)
+	 */
 	Student(String[] data)
 	{
 		id = data[Fields.USERNAME];
