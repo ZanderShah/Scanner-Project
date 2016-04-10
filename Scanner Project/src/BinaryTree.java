@@ -104,13 +104,36 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 	 * @param key the given key
 	 * @return the value associated with the given key
 	 */
-	public Value get(Key key)
+	public Value getValue(Key key)
 	{
-		if (containsKey(key))
-			return getValue(key, root);
-		return null;
+		return getValue(key, root);
 	}
 
+	/**
+	 * Auxiliary method for getValue
+	 * @param key the given key
+	 * @param node the current node to look at
+	 * @return the value associated with the given key
+	 */
+	public Value getValue(Key key, BinaryTreeNode<E> node)
+	{
+		if (node.getKey().compareTo(key) < 0)
+		{
+			if (node.getRight() == null)
+				return null
+			else
+				return getValue(key, node.getRight());
+		}
+		else if (node.getKey().compareTo(key) > 0)
+		{
+			if (node.getLeft() == null)
+				return null;
+			else
+				return getValue(key, node.getLeft());
+		}
+		return node.getValue();
+	}
+	
 	/**
 	 * Removes the node associated with a given key
 	 * @param key the given key
