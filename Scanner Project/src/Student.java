@@ -5,6 +5,7 @@ public class Student implements Comparable<Student>
 
 	/**
 	 * Constructs a student object from information read in from the csv file
+	 * 
 	 * @param data information for the student (null if the file does not 
 	 * contain the piece of information)
 	 */
@@ -27,6 +28,7 @@ public class Student implements Comparable<Student>
 
 	/**
 	 * Gets the student's id
+	 * 
 	 * @return the student's id
 	 */
 	public String getId()
@@ -36,6 +38,7 @@ public class Student implements Comparable<Student>
 
 	/**
 	 * Gets the student's first name
+	 * 
 	 * @return the student's first name
 	 */
 	public String getFirst()
@@ -45,6 +48,7 @@ public class Student implements Comparable<Student>
 
 	/**
 	 * Gets the student's last name
+	 * 
 	 * @return the student's last name
 	 */
 	public String getLast()
@@ -54,6 +58,7 @@ public class Student implements Comparable<Student>
 
 	/**
 	 * Gets the student's grade
+	 * 
 	 * @return the student's grade
 	 */
 	public String getGrade()
@@ -63,6 +68,7 @@ public class Student implements Comparable<Student>
 
 	/**
 	 * Gets the student's homeroom
+	 * 
 	 * @return the student's homeroom
 	 */
 	public String getHomeroom()
@@ -72,6 +78,7 @@ public class Student implements Comparable<Student>
 
 	/**
 	 * Gets the student's password
+	 * 
 	 * @return the student's password
 	 */
 	public String getPassword()
@@ -81,6 +88,7 @@ public class Student implements Comparable<Student>
 	
 	/**
 	 * Gets the student's email
+	 * 
 	 * @return the student's email
 	 */
 	public String getEmail()
@@ -90,6 +98,7 @@ public class Student implements Comparable<Student>
 
 	/**
 	 * Gets the student's address
+	 * 
 	 * @return the student's address
 	 */
 	public String getAddress()

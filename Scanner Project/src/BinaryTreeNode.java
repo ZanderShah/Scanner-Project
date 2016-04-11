@@ -17,6 +17,7 @@ public class BinaryTreeNode<Key extends Comparable<Key>, Value extends Comparabl
 	
 	/**
 	 * Gets the left child node
+	 * 
 	 * @return left child node
 	 */
 	public BinaryTreeNode<Key, Value> getLeft()
@@ -26,6 +27,7 @@ public class BinaryTreeNode<Key extends Comparable<Key>, Value extends Comparabl
 
 	/**
 	 * Gets the right child node
+	 * 
 	 * @return right child node
 	 */
 	public BinaryTreeNode<Key, Value> getRight()
@@ -35,6 +37,7 @@ public class BinaryTreeNode<Key extends Comparable<Key>, Value extends Comparabl
 	
 	/**
 	 * Sets the left child to a new node
+	 * 
 	 * @param left the new node
 	 */
 	public void setLeft(BinaryTreeNode<Key, Value> left)
@@ -44,6 +47,7 @@ public class BinaryTreeNode<Key extends Comparable<Key>, Value extends Comparabl
 	
 	/**
 	 * Sets the right child to a new node
+	 * 
 	 * @param right the new node
 	 */
 	public void setRight(BinaryTreeNode<Key, Value> right)
@@ -53,6 +57,7 @@ public class BinaryTreeNode<Key extends Comparable<Key>, Value extends Comparabl
 	
 	/**
 	 * Gets the value of the node
+	 * 
 	 * @return the value of the node
 	 */
 	public Value getValue()
@@ -62,6 +67,7 @@ public class BinaryTreeNode<Key extends Comparable<Key>, Value extends Comparabl
 	
 	/**
 	 * Set the node's value to a new value
+	 * 
 	 * @param newValue the new value to give the node
 	 */
 	public void setValue(Value newValue)
@@ -71,6 +77,7 @@ public class BinaryTreeNode<Key extends Comparable<Key>, Value extends Comparabl
 	
 	/**
 	 * Gets the node's key
+	 * 
 	 * @return the node's key
 	 */
 	public Key getKey()
@@ -80,6 +87,7 @@ public class BinaryTreeNode<Key extends Comparable<Key>, Value extends Comparabl
 	
 	/**
 	 * Set the node's key to a new key
+	 * 
 	 * @param newKey the new key to give the node
 	 */
 	public void setKey(Key newKey)
@@ -90,6 +98,7 @@ public class BinaryTreeNode<Key extends Comparable<Key>, Value extends Comparabl
 	/**
 	 * Checks whether the node is a leaf or not by
 	 * checking whether or not it has children
+	 * 
 	 * @return whether or not the node is a leaf
 	 */
 	public boolean isLeaf()

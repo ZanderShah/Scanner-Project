@@ -13,7 +13,9 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 
 	/**
 	 * Checks whether or not a key is inside the tree
+	 * 
 	 * @param key the key to look for
+	 * 
 	 * @return whether or not the key is inside the tree
 	 */
 	public boolean containsKey(Key key)
@@ -23,8 +25,10 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 
 	/**
 	 * Auxiliary method for containsKey
+	 * 
 	 * @param key the key to look for
 	 * @param node the current node to look at
+	 * 
 	 * @return whether or not the key is inside the tree
 	 */
 	private boolean containsKey(Key key, BinaryTreeNode<Key, Value> node)
@@ -40,6 +44,7 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 
 	/**
 	 * Gets the size of the tree
+	 * 
 	 * @return the size of the tree
 	 */
 	public int size()
@@ -49,6 +54,7 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 
 	/**
 	 * Adds a new node to the tree
+	 * 
 	 * @param key the key for the new node
 	 * @param value the value for the new node
 	 */
@@ -62,6 +68,7 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 
 	/**
 	 * Auxiliary method for add
+	 * 
 	 * @param insert the new node
 	 * @param node the current node to look at
 	 */
@@ -86,7 +93,9 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 
 	/**
 	 * Auxiliary node for size
+	 * 
 	 * @param node the current node to look at
+	 * 
 	 * @return the size of the tree
 	 */
 	private int size(BinaryTreeNode<Key, Value> node)
@@ -101,6 +110,7 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 
 	/**
 	 * Retrieves the value associated with a given key
+	 * 
 	 * @param key the given key
 	 * @return the value associated with the given key
 	 */
@@ -111,8 +121,10 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 
 	/**
 	 * Auxiliary method for getValue
+	 * 
 	 * @param key the given key
 	 * @param node the current node to look at
+	 * 
 	 * @return the value associated with the given key
 	 */
 	public Value getValue(Key key, BinaryTreeNode<Key, Value> node)
@@ -136,7 +148,9 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 
 	/**
 	 * Removes the node associated with a given key
+	 * 
 	 * @param key the given key
+	 * 
 	 * @return whether or not the key is in the tree
 	 */
 	public boolean remove(Key key)
@@ -151,8 +165,10 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 
 	/**
 	 * Auxiliary method for remove
+	 * 
 	 * @param key the given key
 	 * @param node the current node to look at
+	 * 
 	 * @return the new node that is the left / right child of the current node
 	 */
 	private BinaryTreeNode<Key, Value> remove(Key key,
