@@ -4,7 +4,7 @@ public class Student implements Comparable<Student>
 			address, p1, p2, p3, p4, p5;
 
 	/**
-	 * Construts a student object from information read in from the csv file
+	 * Constructs a student object from information read in from the csv file
 	 * @param data information for the student (null if the file does not 
 	 * contain the piece of information)
 	 */
@@ -54,7 +54,17 @@ public class Student implements Comparable<Student>
 	{
 		return password;
 	}
+	
+	public String getEmail()
+	{
+		return email;
+	}
 
+	public String getAddress()
+	{
+		return address;
+	}
+	
 	public int compareTo(Student student)
 	{
 		return id.compareTo(student.getId());

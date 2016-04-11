@@ -3,8 +3,8 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 	private BinaryTreeNode<Key, Value> root;
 
 	/**
-	 * Initializes the tree by setting the root to null so that
-	 * the user can clear the tree by putting a new one on top of it
+	 * Initializes the tree by setting the root to null so that the user can
+	 * clear the tree by putting a new one on top of it
 	 */
 	public BinaryTree()
 	{
@@ -57,7 +57,7 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 		if (root == null)
 			root = new BinaryTreeNode<Key, Value>(key, value);
 		else
-			add(new BinaryTreeNode<Key, Value>, root);
+			add(new BinaryTreeNode<Key, Value>(key, value), root);
 	}
 
 	/**
@@ -115,12 +115,12 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 	 * @param node the current node to look at
 	 * @return the value associated with the given key
 	 */
-	public Value getValue(Key key, BinaryTreeNode<E> node)
+	public Value getValue(Key key, BinaryTreeNode<Key, Value> node)
 	{
 		if (node.getKey().compareTo(key) < 0)
 		{
 			if (node.getRight() == null)
-				return null
+				return null;
 			else
 				return getValue(key, node.getRight());
 		}
@@ -133,7 +133,7 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 		}
 		return node.getValue();
 	}
-	
+
 	/**
 	 * Removes the node associated with a given key
 	 * @param key the given key
@@ -153,8 +153,7 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 	 * Auxiliary method for remove
 	 * @param key the given key
 	 * @param node the current node to look at
-	 * @return the new node that is the left / right child of the 
-	 * current node
+	 * @return the new node that is the left / right child of the current node
 	 */
 	private BinaryTreeNode<Key, Value> remove(Key key,
 			BinaryTreeNode<Key, Value> node)
