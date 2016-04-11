@@ -100,7 +100,7 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 	}
 
 	/**
-	 * Retrieves the value assosiated with a given key
+	 * Retrieves the value associated with a given key
 	 * @param key the given key
 	 * @return the value associated with the given key
 	 */
