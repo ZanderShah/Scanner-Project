@@ -25,46 +25,78 @@ public class Student implements Comparable<Student>
 		p5 = data[Fields.PERIOD_5];
 	}
 
+	/**
+	 * Gets the student's id
+	 * @return the student's id
+	 */
 	public String getId()
 	{
 		return id;
 	}
 
+	/**
+	 * Gets the student's first name
+	 * @return the student's first name
+	 */
 	public String getFirst()
 	{
 		return firstName;
 	}
 
+	/**
+	 * Gets the student's last name
+	 * @return the student's last name
+	 */
 	public String getLast()
 	{
 		return lastName;
 	}
 
+	/**
+	 * Gets the student's grade
+	 * @return the student's grade
+	 */
 	public String getGrade()
 	{
 		return grade;
 	}
 
+	/**
+	 * Gets the student's homeroom
+	 * @return the student's homeroom
+	 */
 	public String getHomeroom()
 	{
 		return homeroom;
 	}
 
+	/**
+	 * Gets the student's password
+	 * @return the student's password
+	 */
 	public String getPassword()
 	{
 		return password;
 	}
 	
+	/**
+	 * Gets the student's email
+	 * @return the student's email
+	 */
 	public String getEmail()
 	{
 		return email;
 	}
 
+	/**
+	 * Gets the student's address
+	 * @return the student's address
+	 */
 	public String getAddress()
 	{
 		return address;
 	}
-	
+
 	public int compareTo(Student student)
 	{
 		return id.compareTo(student.getId());
