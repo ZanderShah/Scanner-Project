@@ -10,7 +10,7 @@ public class ScannerMain extends JFrame {
 
 	public static void main(String[] args) {
 		ScannerMain s = new ScannerMain();
-		s.readUnencrypted(new BinaryTree<Student>(), new int[] {0, 1, 2, -1, 3, 4, 5}, 1);
+		s.readUnencrypted(new BinaryTree<String, Student>(), new int[] {0, 1, 2, -1, 3, 4, 5}, 1);
 	}
 	
 	/**
@@ -19,7 +19,7 @@ public class ScannerMain extends JFrame {
 	 * @param fieldDefinitions The definitions of what each column in the file refers to
 	 * @param skipLines The number of lines to skip at the beginning of the file
 	 */
-	public void readUnencrypted(BinaryTree<Student> tree, int[] fieldDefinitions, int skipLines) {
+	public void readUnencrypted(BinaryTree<String, Student> tree, int[] fieldDefinitions, int skipLines) {
 		BufferedReader br;
 		try {
 			br = new BufferedReader(new FileReader(new File("StudentInfoFile.csv")));
@@ -46,7 +46,7 @@ public class ScannerMain extends JFrame {
 					}
 				}
 				
-				tree.add(new Student(studentDefinition));
+				tree.add(studentDefinition[0], new Student(studentDefinition));
 			}
 			System.out.println();
 		} catch (IOException e) {
