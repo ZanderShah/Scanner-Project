@@ -71,6 +71,9 @@ public class FileIO {
 					}
 				}
 
+				if (studentDefinition[Fields.USERNAME].length() == 9) {
+					studentDefinition[Fields.USERNAME] = "0" + studentDefinition[Fields.USERNAME];
+				}
 				tree.add(studentDefinition[0], new Student(studentDefinition));
 				read++;
 			}

@@ -1,17 +1,32 @@
 
 
-import javax.swing.*;
-import javax.swing.GroupLayout.SequentialGroup;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 
 public class GUI extends JFrame implements ActionListener{
+	
+	private BinaryTree<String, Student> students;
+	
 	/**
 	 * Create the GUI and show it. For thread safety, this method should be
 	 * invoked from the event-dispatching thread.
@@ -19,6 +34,18 @@ public class GUI extends JFrame implements ActionListener{
 	
 	public GUI() {
 
+		students = new BinaryTree<String, Student>();
+		
+		FormatSpecification fs = new FormatSpecification(new int[] {
+				Fields.USERNAME, Fields.FIRST_NAME, Fields.LAST_NAME,
+				Fields.IGNORE, Fields.GRADE, Fields.HOMEROOM,
+				Fields.PASSWORD}, 1);
+		
+		try {
+			FileIO.readCSV(students, fs, new FileInputStream("StudentInfoFile.csv"));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 		JTabbedPane tabs = new JTabbedPane();
 		
@@ -177,11 +204,16 @@ public class GUI extends JFrame implements ActionListener{
 				
 				//searchField.setText("");
 				
+				Student result = students.getValue(query);
+				
 				// Open information window
-				String [] i = {"0123456789", "Abcde", "Defghijkl", "11", "Homeroom", "4s93je2", "abc@abc.com", "1 casdf", "1", "2", "3", "4", "5"};
-				Student s = new Student (i);
-				JFrame infoFrame = createInfoFrame(s);
-				infoFrame.addWindowListener(new infoWindowListener(searchField));
+				
+				if (result != null) {
+					JFrame infoFrame = createInfoFrame(result);
+					infoFrame.addWindowListener(new infoWindowListener(searchField));
+				} else {
+					JOptionPane.showMessageDialog(GUI.this, "The student was not found in the database.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 				
 		});
