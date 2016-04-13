@@ -38,6 +38,8 @@ public class GUI extends JFrame implements ActionListener{
 	
 	String query = "";
 	
+	boolean infoOpen = false;
+	
 	
 	// Create update layout
 	private JComponent createUpdatePanel() {
@@ -105,19 +107,20 @@ public class GUI extends JFrame implements ActionListener{
 			.addGroup(gl.createSequentialGroup()
 				.addGap(50)
 				.addComponent(usernameLabel)
-				.addGap(50))
-				.addGroup(gl.createSequentialGroup()
-					.addGap(5)
-					.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
-						.addComponent(usernameField)
-						.addComponent(colorButton)
-					)
-					.addGap(5)
-					.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
-						.addComponent(saveButton)
-						.addComponent(quitButton)
-					)
-					.addGap(20)
+				.addGap(50)
+				)
+			.addGroup(gl.createSequentialGroup()
+				.addGap(5)
+				.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addComponent(usernameField)
+					.addComponent(colorButton)
+				)
+				.addGap(5)
+				.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addComponent(saveButton)
+					.addComponent(quitButton)
+				)
+				.addGap(20)
 			)
 		);
 		
@@ -135,8 +138,9 @@ public class GUI extends JFrame implements ActionListener{
 		// Init Components
 		
 		JButton searchButton = new JButton ("Search");
-		searchButton.setMnemonic(KeyEvent.VK_A);
+		//searchButton.setMnemonic(KeyEvent.VK_A);
 		JTextField searchField = new JTextField();
+		
 		
 		// Limit input to 10 characters
 		searchField.addKeyListener(new KeyAdapter() {
@@ -171,7 +175,10 @@ public class GUI extends JFrame implements ActionListener{
 				//searchField.setText("");
 				
 				// Open information window
-				JFrame infoFrame = createInfoFrame("ABC", "013947102", "s9e3k3j");
+				if (!infoOpen){
+					JFrame infoFrame = createInfoFrame(new Student ());
+					infoOpen = true;
+				}
 				
 			}
 			
@@ -214,13 +221,13 @@ public class GUI extends JFrame implements ActionListener{
 	
 	
 	// Create Student Information Frame
-	private JFrame createInfoFrame(String name, String studentNo, String password) {
+	private JFrame createInfoFrame(Student s) {
 		
-		JLabel nameLabel = new JLabel(name);
+		JLabel nameLabel = new JLabel(s.getFirst() + s.getLast());
 		nameLabel.setFont(new Font("Calibri", Font.BOLD, 20));
-		JLabel studentNoLabel2 = new JLabel(studentNo);
+		JLabel studentNoLabel2 = new JLabel(s.getId());
 		studentNoLabel2.setFont(new Font("Calibri", Font.PLAIN, 16));
-		JLabel passwordLabel2 = new JLabel(password);
+		JLabel passwordLabel2 = new JLabel(s.getPassword());
 		passwordLabel2.setFont(new Font("Calibri", Font.PLAIN, 16));
 		
 		JLabel studentNoLabel1 = new JLabel("Student No.");
@@ -287,12 +294,6 @@ public class GUI extends JFrame implements ActionListener{
 	class quitListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
 			System.exit(0);
-		}
-	}
-	
-	class colorListener implements ActionListener {
-		public void actionPerformed(ActionEvent event) {
-
 		}
 	}
 
