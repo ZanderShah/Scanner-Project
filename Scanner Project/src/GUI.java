@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 public class GUI extends JFrame implements ActionListener{
 	/**
@@ -38,7 +40,7 @@ public class GUI extends JFrame implements ActionListener{
 	
 	String query = "";
 	
-	boolean infoOpen = false;
+	//boolean infoOpen = false;
 	
 	
 	// Create update layout
@@ -128,6 +130,7 @@ public class GUI extends JFrame implements ActionListener{
 	}
 	
 	
+	
 	// Create search layout
 	private JComponent createSearchPanel() {
 		JPanel p = new JPanel(true);
@@ -136,10 +139,10 @@ public class GUI extends JFrame implements ActionListener{
 		//p.setBackground(new Color);
 		
 		// Init Components
-		
+		JTextField searchField = new JTextField();
 		JButton searchButton = new JButton ("Search");
 		//searchButton.setMnemonic(KeyEvent.VK_A);
-		JTextField searchField = new JTextField();
+
 		
 		
 		// Limit input to 10 characters
@@ -175,13 +178,12 @@ public class GUI extends JFrame implements ActionListener{
 				//searchField.setText("");
 				
 				// Open information window
-				if (!infoOpen){
-					JFrame infoFrame = createInfoFrame(new Student ());
-					infoOpen = true;
-				}
-				
+				String [] i = {"0123456789", "Abcde", "Defghijkl", "11", "Homeroom", "4s93je2", "abc@abc.com", "1 casdf", "1", "2", "3", "4", "5"};
+				Student s = new Student (i);
+				JFrame infoFrame = createInfoFrame(s);
+				infoFrame.addWindowListener(new infoWindowListener(searchField));
 			}
-			
+				
 		});
 		
 		
@@ -223,7 +225,7 @@ public class GUI extends JFrame implements ActionListener{
 	// Create Student Information Frame
 	private JFrame createInfoFrame(Student s) {
 		
-		JLabel nameLabel = new JLabel(s.getFirst() + s.getLast());
+		JLabel nameLabel = new JLabel(s.getFirst() + " " + s.getLast());
 		nameLabel.setFont(new Font("Calibri", Font.BOLD, 20));
 		JLabel studentNoLabel2 = new JLabel(s.getId());
 		studentNoLabel2.setFont(new Font("Calibri", Font.PLAIN, 16));
@@ -302,4 +304,60 @@ public class GUI extends JFrame implements ActionListener{
 		// TODO Auto-generated method stub
 		
 	}
+
+
+	class infoWindowListener implements WindowListener{
+		
+		JTextField field;
+		
+		infoWindowListener(JTextField field){
+			this.field = field;
+		}
+
+		@Override
+		public void windowActivated(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowClosed(WindowEvent e) {
+			// TODO Auto-generated method stub
+			field.setText("");
+		}
+
+		@Override
+		public void windowClosing(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowDeactivated(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowDeiconified(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowIconified(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void windowOpened(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		
+	}
+	
+	
 }
