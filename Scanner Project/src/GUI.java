@@ -22,6 +22,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 
 public class GUI extends JFrame implements ActionListener{
 	
@@ -170,13 +172,13 @@ public class GUI extends JFrame implements ActionListener{
 		JButton searchButton = new JButton ("Search");
 		//searchButton.setMnemonic(KeyEvent.VK_A);
 
-		
+		boolean selected = false;
 		
 		// Limit input to 10 characters
 		searchField.addKeyListener(new KeyAdapter() {
 	        @Override
 	        public void keyTyped(KeyEvent e) {
-	            if (searchField.getText().length() >= 10 || !Character.isDigit(e.getKeyChar())){
+	            if (!selected && (searchField.getText().length() >= 10 || !Character.isDigit(e.getKeyChar()))){
 	                e.consume();
 	            }
 	            if (e.getKeyChar() == KeyEvent.VK_ENTER){
@@ -184,6 +186,8 @@ public class GUI extends JFrame implements ActionListener{
 	            }
 	        }
 		});
+		
+		searchField.addCaretListener(new textFieldCaretListener(selected));
 		
 		// Search Button 
 		searchButton.addActionListener(new ActionListener () {
@@ -387,7 +391,23 @@ public class GUI extends JFrame implements ActionListener{
 			// TODO Auto-generated method stub
 			
 		}
-
+	}
+	
+	class textFieldCaretListener implements CaretListener{
+		boolean selected;
+		textFieldCaretListener(boolean selected){
+			this.selected = selected;
+		}
+		
+		@Override
+		public void caretUpdate(CaretEvent e) {
+			if (e.getDot() == e.getMark()){
+				selected = false;
+			}
+			else{
+				selected = true;
+			}
+		}
 		
 	}
 	
