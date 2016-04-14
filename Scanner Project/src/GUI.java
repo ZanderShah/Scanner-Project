@@ -13,6 +13,7 @@ import java.awt.event.WindowListener;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -51,14 +52,15 @@ public class GUI extends JFrame implements ActionListener{
 		
 		JTabbedPane tabs = new JTabbedPane();
 		
-		// Add Update Panel
-		JComponent updatePanel = createUpdatePanel();
-		tabs.addTab("Update", updatePanel);
-		
 		// Add Search Panel
 		JComponent searchPanel = createSearchPanel();
 		tabs.addTab("Search", searchPanel);
 		
+		
+		// Add Update Panel
+		JComponent updatePanel = createUpdatePanel();
+		tabs.addTab("Update", updatePanel);
+
 		
 		createAndShowGUI(tabs);
 	}
@@ -172,13 +174,29 @@ public class GUI extends JFrame implements ActionListener{
 		JButton searchButton = new JButton ("Search");
 		//searchButton.setMnemonic(KeyEvent.VK_A);
 
-		boolean selected = false;
+		boolean [] selected = new boolean [1];
+		selected[0] = false;
+		
+		searchField.addCaretListener(new CaretListener(){
+
+			@Override
+			public void caretUpdate(CaretEvent e) {
+				
+				if (e.getDot() == e.getMark()){
+					selected[0] = false;
+				}
+				else{
+					selected[0] = true;
+				}
+			}
+			
+		});
 		
 		// Limit input to 10 characters
 		searchField.addKeyListener(new KeyAdapter() {
 	        @Override
 	        public void keyTyped(KeyEvent e) {
-	            if (!selected && (searchField.getText().length() >= 10 || !Character.isDigit(e.getKeyChar()))){
+	            if (!selected[0] && (searchField.getText().length() >= 10 || !Character.isDigit(e.getKeyChar()))){
 	                e.consume();
 	            }
 	            if (e.getKeyChar() == KeyEvent.VK_ENTER){
@@ -187,12 +205,11 @@ public class GUI extends JFrame implements ActionListener{
 	        }
 		});
 		
-		searchField.addCaretListener(new textFieldCaretListener(selected));
-		
 		// Search Button 
 		searchButton.addActionListener(new ActionListener () {
 			public void actionPerformed(ActionEvent e) {
-				//SEARCH
+				
+				//check input
 				if (searchField.getText().length() == 9){
 					query = "0" + searchField.getText();
 				}
@@ -200,18 +217,16 @@ public class GUI extends JFrame implements ActionListener{
 					query = searchField.getText();
 				}
 				else {
-					System.out.println("invalid input");
+					JOptionPane.showMessageDialog(GUI.this, "Invalid input, student number must be 9 or 10 digits in length.", "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
 				System.out.println("Search: " + query);
 				
-				//searchField.setText("");
-				
+				// Search database
 				Student result = students.getValue(query);
 				
 				// Open information window
-				
 				if (result != null) {
 					JFrame infoFrame = createInfoFrame(result);
 					infoFrame.addWindowListener(new infoWindowListener(searchField));
@@ -227,7 +242,9 @@ public class GUI extends JFrame implements ActionListener{
 		
 		gl.setAutoCreateContainerGaps(true);
 		gl.setAutoCreateGaps(true);
-		searchField.setFont(new Font("Consolas", Font.BOLD, 16));
+		searchField.setFont(new Font("Consolas", Font.BOLD, 24));
+		//searchField.setOpaque(false);
+		searchField.setBorder(BorderFactory.createEmptyBorder());
 		
 		gl.setHorizontalGroup(gl.createSequentialGroup()
 			.addComponent(searchField, 200,200,200)
@@ -235,9 +252,12 @@ public class GUI extends JFrame implements ActionListener{
 		);
 
 		
-		gl.setVerticalGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
-			.addComponent(searchField)
-			.addComponent(searchButton)
+		gl.setVerticalGroup(gl.createSequentialGroup()
+			.addGap(40)
+			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+				.addComponent(searchField)
+				.addComponent(searchButton)
+			)
 		);
 		
 		return p;
@@ -261,17 +281,35 @@ public class GUI extends JFrame implements ActionListener{
 	// Create Student Information Frame
 	private JFrame createInfoFrame(Student s) {
 		
+		// data labels
 		JLabel nameLabel = new JLabel(s.getFirst() + " " + s.getLast());
 		nameLabel.setFont(new Font("Calibri", Font.BOLD, 20));
 		JLabel studentNoLabel2 = new JLabel(s.getId());
 		studentNoLabel2.setFont(new Font("Calibri", Font.PLAIN, 16));
 		JLabel passwordLabel2 = new JLabel(s.getPassword());
 		passwordLabel2.setFont(new Font("Calibri", Font.PLAIN, 16));
+		JLabel gradeLabel2 = new JLabel(s.getGrade());
+		gradeLabel2.setFont(new Font("Calibri", Font.PLAIN, 16));
+		JLabel homeroomLabel2 = new JLabel(s.getHomeroom());
+		homeroomLabel2.setFont(new Font("Calibri", Font.PLAIN, 16));
+		JLabel addressLabel2 = new JLabel(s.getAddress());
+		addressLabel2.setFont(new Font("Calibri", Font.PLAIN, 16));
+		JLabel emailLabel2 = new JLabel(s.getEmail());
+		emailLabel2.setFont(new Font("Calibri", Font.PLAIN, 16));
 		
+		// regular labels
 		JLabel studentNoLabel1 = new JLabel("Student No.");
 		studentNoLabel1.setFont(new Font("Calibri", Font.BOLD, 16));
 		JLabel passwordLabel1 = new JLabel("Password");
 		passwordLabel1.setFont(new Font("Calibri", Font.BOLD, 16));
+		JLabel gradeLabel1 = new JLabel("Grade");
+		gradeLabel1.setFont(new Font("Calibri", Font.BOLD, 16));
+		JLabel homeroomLabel1 = new JLabel("Homeroom");
+		homeroomLabel1.setFont(new Font("Calibri", Font.BOLD, 16));
+		JLabel addressLabel1 = new JLabel("Address");
+		addressLabel1.setFont(new Font("Calibri", Font.BOLD, 16));
+		JLabel emailLabel1 = new JLabel("Email");
+		emailLabel1.setFont(new Font("Calibri", Font.BOLD, 16));
 		
 		
 		JPanel p = new JPanel ();
@@ -281,19 +319,27 @@ public class GUI extends JFrame implements ActionListener{
 		gl.setAutoCreateContainerGaps(true);
 		gl.setHorizontalGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)
 			.addComponent(nameLabel)
-			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addGroup(gl.createSequentialGroup()
+			.addGroup(gl.createSequentialGroup()
+				.addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)
 					.addComponent(studentNoLabel1)
-					.addComponent(studentNoLabel2)
-				)
-				.addGroup(gl.createSequentialGroup()
 					.addComponent(passwordLabel1)
+					.addComponent(gradeLabel1)
+					.addComponent(homeroomLabel1)
+					.addComponent(addressLabel1)
+					.addComponent(emailLabel1)
+				)
+				.addGap(50)
+				.addGroup(gl.createParallelGroup(GroupLayout.Alignment.TRAILING)
+					.addComponent(studentNoLabel2)
 					.addComponent(passwordLabel2)
+					.addComponent(gradeLabel2)
+					.addComponent(homeroomLabel2)
+					.addComponent(addressLabel2)
+					.addComponent(emailLabel2)
 				)
 			)
 		);
 		
-		//NOT DONE
 		gl.setVerticalGroup(gl.createSequentialGroup()
 			.addComponent(nameLabel)
 			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
@@ -303,6 +349,22 @@ public class GUI extends JFrame implements ActionListener{
 			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
 				.addComponent(passwordLabel1)
 				.addComponent(passwordLabel2)
+			)
+			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+				.addComponent(gradeLabel1)
+				.addComponent(gradeLabel2)
+			)
+			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+				.addComponent(homeroomLabel1)
+				.addComponent(homeroomLabel2)
+			)
+			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+				.addComponent(addressLabel1)
+				.addComponent(addressLabel2)
+			)
+			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+				.addComponent(emailLabel1)
+				.addComponent(emailLabel2)
 			)
 		);
 		
@@ -392,24 +454,5 @@ public class GUI extends JFrame implements ActionListener{
 			
 		}
 	}
-	
-	class textFieldCaretListener implements CaretListener{
-		boolean selected;
-		textFieldCaretListener(boolean selected){
-			this.selected = selected;
-		}
-		
-		@Override
-		public void caretUpdate(CaretEvent e) {
-			if (e.getDot() == e.getMark()){
-				selected = false;
-			}
-			else{
-				selected = true;
-			}
-		}
-		
-	}
-	
 	
 }
