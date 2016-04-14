@@ -20,6 +20,8 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 	 */
 	public boolean containsKey(Key key)
 	{
+		if (root == null)
+			return false;
 		return containsKey(key, root);
 	}
 
@@ -116,6 +118,8 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 	 */
 	public Value getValue(Key key)
 	{
+		if (root == null)
+			return null;
 		return getValue(key, root);
 	}
 
