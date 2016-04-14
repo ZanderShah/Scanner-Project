@@ -2,7 +2,7 @@
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,23 +10,31 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
 
-public class GUI extends JFrame implements ActionListener{
+public class GUI extends JFrame {
 	
 	private BinaryTree<String, Student> students;
 	
@@ -43,12 +51,6 @@ public class GUI extends JFrame implements ActionListener{
 				Fields.USERNAME, Fields.FIRST_NAME, Fields.LAST_NAME,
 				Fields.IGNORE, Fields.GRADE, Fields.HOMEROOM,
 				Fields.PASSWORD}, 1);
-		
-		try {
-			FileIO.readCSV(students, fs, new FileInputStream("StudentInfoFile.csv"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
 		
 		JTabbedPane tabs = new JTabbedPane();
 		
@@ -84,7 +86,7 @@ public class GUI extends JFrame implements ActionListener{
 		
 		
 		JButton quitButton = new JButton ("Quit");
-		JButton saveButton = new JButton ("Save Username");
+		JButton updateButton = new JButton ("Update Database");
 		JButton colorButton = new JButton ("Change Color");
 		colorButton.setToolTipText("Changes the background colour");
 		JTextField usernameField = new JTextField("Username");
@@ -93,12 +95,15 @@ public class GUI extends JFrame implements ActionListener{
 		
 		
 		quitButton.addActionListener(new quitListener());
-		saveButton.addActionListener(new ActionListener () {
+		updateButton.addActionListener(new ActionListener () {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				username = usernameField.getText();
-				usernameLabel.setText(username);
+//				username = usernameField.getText();
+//				usernameLabel.setText(username);
+				
+				JFrame file = createFileImport();
+				file.setVisible(true);
 			}
 			
 		});
@@ -123,7 +128,7 @@ public class GUI extends JFrame implements ActionListener{
 			.addGap(10)
 			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(usernameField)
-				.addComponent(saveButton)
+				.addComponent(updateButton)
 			)
 			.addGap(5)
 			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -150,7 +155,7 @@ public class GUI extends JFrame implements ActionListener{
 				)
 				.addGap(5)
 				.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(saveButton)
+					.addComponent(updateButton)
 					.addComponent(quitButton)
 				)
 				.addGap(20)
@@ -380,6 +385,95 @@ public class GUI extends JFrame implements ActionListener{
 		
 		return infoFrame;
 	}
+	
+	private File selectedFile;
+	
+	public JFrame createFileImport() {
+		JFrame fileFrame = new JFrame();
+		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+		
+		JPanel columnSelection = new JPanel();
+		JPanel dropDown = new JPanel();
+		columnSelection.add(dropDown);
+		JTable preview = new JTable();
+		columnSelection.add(preview);
+		
+		JPanel fileSelect = new JPanel();
+		fileSelect.setLayout(new FlowLayout());
+		JFileChooser jfc = new JFileChooser();
+		JLabel currentFile = new JLabel("Current file: ");
+		JButton select = new JButton("Choose file...");
+		
+		select.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int status = jfc.showOpenDialog(GUI.this);
+				if (status == JFileChooser.APPROVE_OPTION) {
+					selectedFile = jfc.getSelectedFile();
+					currentFile.setText("Current file: " + selectedFile.getPath());
+					dropDown.removeAll();
+					int numCols = countColumns(selectedFile);
+					for (int i = 0; i < numCols; i++) {
+						dropDown.add(makeDropDown());
+					}
+					
+					
+					
+					fileFrame.pack();
+				}
+			}
+
+			private int countColumns(File selectedFile) {
+				try {
+					int cols = 0;
+					BufferedReader br = new BufferedReader(new FileReader(selectedFile));
+					
+					while (br.ready()) {
+						String line = br.readLine();
+						cols = Math.max(cols, line.split(",").length);
+					}
+					return cols;
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				return 0;
+			}
+			
+			private JComboBox<String> makeDropDown() {
+				JComboBox<String> fieldSelect = new JComboBox<String>();
+				fieldSelect.addItem("Username");
+				fieldSelect.addItem("First Name");
+				fieldSelect.addItem("Last Name");
+				fieldSelect.addItem("Grade");
+				fieldSelect.addItem("Homeroom");
+				fieldSelect.addItem("Password");
+				fieldSelect.addItem("Email");
+				fieldSelect.addItem("Address");
+				fieldSelect.addItem("Period 1");
+				fieldSelect.addItem("Period 2");
+				fieldSelect.addItem("Period 3");
+				fieldSelect.addItem("Period 4");
+				fieldSelect.addItem("Period 5");
+				fieldSelect.addItem("Ignore");
+				return fieldSelect;
+			}
+		});
+		fileSelect.add(select);
+		fileSelect.add(currentFile);
+		
+		JPanel options = new JPanel();
+		
+		mainPanel.add(fileSelect);
+		mainPanel.add(columnSelection);
+		mainPanel.add(options);
+		
+		fileFrame.setContentPane(mainPanel);
+		
+		fileFrame.pack();
+		
+		return fileFrame;
+	}
 
 	public static void main(String[] args) {
 		// Schedule a job for the event-dispatching thread:
@@ -397,13 +491,6 @@ public class GUI extends JFrame implements ActionListener{
 		}
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
 	class infoWindowListener implements WindowListener{
 		
 		JTextField field;
@@ -414,44 +501,31 @@ public class GUI extends JFrame implements ActionListener{
 
 		@Override
 		public void windowActivated(WindowEvent e) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void windowClosed(WindowEvent e) {
-			// TODO Auto-generated method stub
 			field.setText("");
 		}
 
 		@Override
 		public void windowClosing(WindowEvent e) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void windowDeactivated(WindowEvent e) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void windowDeiconified(WindowEvent e) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void windowIconified(WindowEvent e) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void windowOpened(WindowEvent e) {
-			// TODO Auto-generated method stub
-			
 		}
 	}
 	
