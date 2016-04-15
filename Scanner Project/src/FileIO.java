@@ -61,7 +61,7 @@ public class FileIO {
 
 				// Determine what each column is based off the definitions
 				for (int field = 0; field < fields.length; field++) {
-					if (fs.getDefinitions()[field] != -1) {
+					if (fs.getDefinitions()[field] != Fields.IGNORE) {
 
 						// Sanitize input strings
 						fields[field] = fields[field].trim();
