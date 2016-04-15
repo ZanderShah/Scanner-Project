@@ -14,4 +14,8 @@ public class FormatSpecification {
 	public int getLines() { 
 		return skipLines;
 	}
+	
+	public void setDefinitions(int[] fd) {
+		fieldDefinitions = fd;
+	}
 }

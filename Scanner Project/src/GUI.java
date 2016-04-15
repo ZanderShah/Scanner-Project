@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -31,8 +32,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
 
 public class GUI extends JFrame {
 	
@@ -387,8 +386,11 @@ public class GUI extends JFrame {
 	}
 	
 	private File selectedFile;
+	private int newLineSkip, newFieldSpecification[];
+	private ArrayList<JComboBox<String>> columns = new ArrayList<JComboBox<String>>();
 	
 	public JFrame createFileImport() {
+				
 		JFrame fileFrame = new JFrame();
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -415,15 +417,15 @@ public class GUI extends JFrame {
 					dropDown.removeAll();
 					int numCols = countColumns(selectedFile);
 					for (int i = 0; i < numCols; i++) {
-						dropDown.add(makeDropDown());
+						columns.add(makeDropDown());
+						dropDown.add(columns.get(columns.size() - 1));
 					}
-					
-					
+					dropDown.add(lineSkipSelection());
 					
 					fileFrame.pack();
 				}
-			}
-
+			}			
+			
 			private int countColumns(File selectedFile) {
 				try {
 					int cols = 0;
@@ -440,23 +442,59 @@ public class GUI extends JFrame {
 				return 0;
 			}
 			
+			private int countRows(File selectedFile) {
+				try {
+					int rows = 0;
+					BufferedReader br = new BufferedReader(new FileReader(selectedFile));
+					
+					while (br.ready()) {
+						br.readLine();
+						rows++;
+					}
+					return rows;
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				return 0;
+			}
+			
 			private JComboBox<String> makeDropDown() {
-				JComboBox<String> fieldSelect = new JComboBox<String>();
-				fieldSelect.addItem("Username");
-				fieldSelect.addItem("First Name");
-				fieldSelect.addItem("Last Name");
-				fieldSelect.addItem("Grade");
-				fieldSelect.addItem("Homeroom");
-				fieldSelect.addItem("Password");
-				fieldSelect.addItem("Email");
-				fieldSelect.addItem("Address");
-				fieldSelect.addItem("Period 1");
-				fieldSelect.addItem("Period 2");
-				fieldSelect.addItem("Period 3");
-				fieldSelect.addItem("Period 4");
-				fieldSelect.addItem("Period 5");
-				fieldSelect.addItem("Ignore");
+				
+				String[] options = { "Username", "First Name", "Last Name", "Grade", "Homeroom", "Password", "Email", "Address", 
+						"Period 1", "Period 2", "Period 3", "Period 4", "Period 5", "Ignore"};
+				newFieldSpecification = new int[options.length];
+				JComboBox<String> fieldSelect = new JComboBox<String>(options);
+				fieldSelect.setSelectedIndex(13);
+				fieldSelect.addActionListener(new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						for (int j = 0; j < columns.size(); j++)
+							if (e.getSource() == columns.get(j)) {
+								String option = (String)(((JComboBox<String>)e.getSource()).getSelectedItem());
+								for (int k = 0; k < options.length; k++)
+									if (options[k].equals(option))
+										newFieldSpecification[j] = k;
+							}
+					}
+				});
 				return fieldSelect;
+			}
+			
+			private JComboBox<Integer> lineSkipSelection() {
+				Integer[] options = new Integer[countRows(selectedFile) + 1];
+				for (int i = 0; i < options.length; i++)
+					options[i] = i;
+				JComboBox<Integer> lineSkip = new JComboBox<Integer>(options);
+				lineSkip.setSelectedIndex(0);
+				lineSkip.addActionListener(new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						JComboBox<Integer> info = (JComboBox)e.getSource();
+						int index = (int) info.getSelectedItem();
+						newLineSkip = index;
+					}
+				});
+				return lineSkip;
 			}
 		});
 		fileSelect.add(select);
