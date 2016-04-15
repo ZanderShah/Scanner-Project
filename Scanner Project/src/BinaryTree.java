@@ -125,7 +125,8 @@ public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Va
 	 * @param key the given key
 	 * @param node the current node to look at
 	 * 
-	 * @return the value associated with the given key
+	 * @return the value associated with the given key or null if the
+	 * value cannot be found
 	 */
 	public Value getValue(Key key, BinaryTreeNode<Key, Value> node)
 	{

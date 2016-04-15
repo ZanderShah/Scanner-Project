@@ -196,7 +196,7 @@ public class GUI extends JFrame implements ActionListener{
 					query = searchField.getText();
 				}
 				else {
-					System.out.println("invalid input");
+					System.out.println("Invalid Input");
 					return;
 				}
 				
