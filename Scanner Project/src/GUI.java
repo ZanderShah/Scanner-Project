@@ -101,7 +101,7 @@ public class GUI extends JFrame {
 //				username = usernameField.getText();
 //				usernameLabel.setText(username);
 				
-				JFrame file = createFileImport();
+				JFrame file = new FileUpdateFrame();
 				file.setVisible(true);
 			}
 			
@@ -383,134 +383,6 @@ public class GUI extends JFrame {
 
 		
 		return infoFrame;
-	}
-	
-	private File selectedFile;
-	private int newLineSkip, newFieldSpecification[];
-	private ArrayList<JComboBox<String>> columns = new ArrayList<JComboBox<String>>();
-	
-	public JFrame createFileImport() {
-				
-		JFrame fileFrame = new JFrame();
-		JPanel mainPanel = new JPanel();
-		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-		
-		JPanel columnSelection = new JPanel();
-		JPanel dropDown = new JPanel();
-		columnSelection.add(dropDown);
-		JTable preview = new JTable();
-		columnSelection.add(preview);
-		
-		JPanel fileSelect = new JPanel();
-		fileSelect.setLayout(new FlowLayout());
-		JFileChooser jfc = new JFileChooser();
-		JLabel currentFile = new JLabel("Current file: ");
-		JButton select = new JButton("Choose file...");
-		
-		select.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int status = jfc.showOpenDialog(GUI.this);
-				if (status == JFileChooser.APPROVE_OPTION) {
-					selectedFile = jfc.getSelectedFile();
-					currentFile.setText("Current file: " + selectedFile.getPath());
-					dropDown.removeAll();
-					int numCols = countColumns(selectedFile);
-					for (int i = 0; i < numCols; i++) {
-						columns.add(makeDropDown());
-						dropDown.add(columns.get(columns.size() - 1));
-					}
-					dropDown.add(lineSkipSelection());
-					
-					fileFrame.pack();
-				}
-			}			
-			
-			private int countColumns(File selectedFile) {
-				try {
-					int cols = 0;
-					BufferedReader br = new BufferedReader(new FileReader(selectedFile));
-					
-					while (br.ready()) {
-						String line = br.readLine();
-						cols = Math.max(cols, line.split(",").length);
-					}
-					return cols;
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				return 0;
-			}
-			
-			private int countRows(File selectedFile) {
-				try {
-					int rows = 0;
-					BufferedReader br = new BufferedReader(new FileReader(selectedFile));
-					
-					while (br.ready()) {
-						br.readLine();
-						rows++;
-					}
-					return rows;
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				return 0;
-			}
-			
-			private JComboBox<String> makeDropDown() {
-				
-				String[] options = { "Username", "First Name", "Last Name", "Grade", "Homeroom", "Password", "Email", "Address", 
-						"Period 1", "Period 2", "Period 3", "Period 4", "Period 5", "Ignore"};
-				newFieldSpecification = new int[options.length];
-				JComboBox<String> fieldSelect = new JComboBox<String>(options);
-				fieldSelect.setSelectedIndex(13);
-				fieldSelect.addActionListener(new ActionListener(){
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						for (int j = 0; j < columns.size(); j++)
-							if (e.getSource() == columns.get(j)) {
-								String option = (String)(((JComboBox<String>)e.getSource()).getSelectedItem());
-								for (int k = 0; k < options.length; k++)
-									if (options[k].equals(option))
-										newFieldSpecification[j] = k;
-							}
-					}
-				});
-				return fieldSelect;
-			}
-			
-			private JComboBox<Integer> lineSkipSelection() {
-				Integer[] options = new Integer[countRows(selectedFile) + 1];
-				for (int i = 0; i < options.length; i++)
-					options[i] = i;
-				JComboBox<Integer> lineSkip = new JComboBox<Integer>(options);
-				lineSkip.setSelectedIndex(0);
-				lineSkip.addActionListener(new ActionListener(){
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						JComboBox<Integer> info = (JComboBox)e.getSource();
-						int index = (int) info.getSelectedItem();
-						newLineSkip = index;
-					}
-				});
-				return lineSkip;
-			}
-		});
-		fileSelect.add(select);
-		fileSelect.add(currentFile);
-		
-		JPanel options = new JPanel();
-		
-		mainPanel.add(fileSelect);
-		mainPanel.add(columnSelection);
-		mainPanel.add(options);
-		
-		fileFrame.setContentPane(mainPanel);
-		
-		fileFrame.pack();
-		
-		return fileFrame;
 	}
 
 	public static void main(String[] args) {
