@@ -101,7 +101,7 @@ public class GUI extends JFrame {
 //				username = usernameField.getText();
 //				usernameLabel.setText(username);
 				
-				JFrame file = createFileImport();
+				JFrame file = new FileUpdateFrame();
 				file.setVisible(true);
 			}
 			
@@ -378,9 +378,6 @@ public class GUI extends JFrame {
 		//infoFrame.setSize(400, 300);
 		infoFrame.add(p);
 		infoFrame.pack();
-
-		
-
 		
 		return infoFrame;
 	}
