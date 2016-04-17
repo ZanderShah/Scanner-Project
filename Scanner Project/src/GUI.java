@@ -472,8 +472,10 @@ public class GUI extends JFrame {
 							if (e.getSource() == columns.get(j)) {
 								String option = (String)(((JComboBox<String>)e.getSource()).getSelectedItem());
 								for (int k = 0; k < options.length; k++)
-									if (options[k].equals(option))
+									if (options[k].equals(option)) {
 										newFieldSpecification[j] = k;
+										System.out.println("Column #" + j + ": " + options[k]);
+									}
 							}
 					}
 				});
@@ -491,6 +493,7 @@ public class GUI extends JFrame {
 					public void actionPerformed(ActionEvent e) {
 						JComboBox<Integer> info = (JComboBox)e.getSource();
 						int index = (int) info.getSelectedItem();
+						System.out.println("Skipped Lines: " + index);
 						newLineSkip = index;
 					}
 				});
