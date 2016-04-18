@@ -25,7 +25,7 @@ public class FileUpdateFrame extends JFrame {
 	private File selectedFile;
 	private ArrayList<JComboBox<String>> columns = new ArrayList<JComboBox<String>>();
 	
-	public FileUpdateFrame() {
+	public FileUpdateFrame(GUI gui) {
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 		
@@ -119,7 +119,7 @@ public class FileUpdateFrame extends JFrame {
 		JPanel lineSkipPanel = new JPanel();
 		lineSkipPanel.setLayout(new GridLayout());
 		lineSkipPanel.add(new JLabel("Skip lines: "));
-		JTextField lineSkip = new JTextField();
+		JTextField lineSkip = new JTextField("0");
 		lineSkipPanel.add(lineSkip);
 		options.add(lineSkipPanel);
 		
@@ -159,6 +159,8 @@ public class FileUpdateFrame extends JFrame {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				
+				gui.loadDatabase();
 				
 				dispose();
 			}

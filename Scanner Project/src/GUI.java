@@ -1,5 +1,3 @@
-
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -38,6 +36,23 @@ public class GUI extends JFrame {
 	 */
 	
 	public GUI() {
+		loadDatabase();
+		
+		JTabbedPane tabs = new JTabbedPane();
+		
+		// Add Search Panel
+		JComponent searchPanel = createSearchPanel();
+		tabs.addTab("Search", searchPanel);
+		
+		
+		// Add Update Panel
+		JComponent updatePanel = createUpdatePanel();
+		tabs.addTab("Update", updatePanel);
+
+		createAndShowGUI(tabs);
+	}
+	
+	public void loadDatabase() {
 		students = new BinaryTree<String, Student>();
 		
 		KeyGenerator keygen = null;
@@ -58,19 +73,6 @@ public class GUI extends JFrame {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		JTabbedPane tabs = new JTabbedPane();
-		
-		// Add Search Panel
-		JComponent searchPanel = createSearchPanel();
-		tabs.addTab("Search", searchPanel);
-		
-		
-		// Add Update Panel
-		JComponent updatePanel = createUpdatePanel();
-		tabs.addTab("Update", updatePanel);
-
-		createAndShowGUI(tabs);
 	}
 	
 	Color c = new Color ((int)(Math.random()*255), (int)(Math.random()*255), (int)(Math.random()*255));
@@ -103,10 +105,7 @@ public class GUI extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-//				username = usernameField.getText();
-//				usernameLabel.setText(username);
-				
-				JFrame file = new FileUpdateFrame();
+				JFrame file = new FileUpdateFrame(GUI.this);
 				file.setVisible(true);
 			}
 			
