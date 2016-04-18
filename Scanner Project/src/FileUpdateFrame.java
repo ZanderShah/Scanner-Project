@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -142,13 +143,16 @@ public class FileUpdateFrame extends JFrame {
 				try {
 					lines = Integer.parseInt(lineSkip.getText());
 				} catch (NumberFormatException e) {
-					e.printStackTrace();
 					JOptionPane.showMessageDialog(FileUpdateFrame.this, "Invalid number of skipped lines.");
 					return;
 				}
 				
 				FormatSpecification fs = new FormatSpecification(fields, lines);
 				
+				if (selectedFile == null) {
+					JOptionPane.showMessageDialog(FileUpdateFrame.this, "No file was selected", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 				try {
 					FileIO.saveFormatSpecification(new File("config"), fs);
 					FileIO.encryptFile(selectedFile, new File("data"));
@@ -156,6 +160,8 @@ public class FileUpdateFrame extends JFrame {
 					if (delete.isSelected()) {
 						Files.delete(selectedFile.toPath());
 					}
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
