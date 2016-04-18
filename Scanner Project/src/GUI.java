@@ -1,9 +1,8 @@
-
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -18,6 +17,7 @@ import java.io.IOException;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -29,6 +29,11 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.LookAndFeel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.TableModelListener;
@@ -43,6 +48,10 @@ public class GUI extends JFrame {
 	 * invoked from the event-dispatching thread.
 	 */
 	
+	Color accentGreen = new Color (124, 218, 52);
+	Color backgroundGrey = new Color (100, 100, 100);
+	Color foregroundGrey = new Color (150, 150, 150);
+	
 	public GUI() {
 
 		students = new BinaryTree<String, Student>();
@@ -53,15 +62,39 @@ public class GUI extends JFrame {
 				Fields.PASSWORD}, 1);
 		
 		JTabbedPane tabs = new JTabbedPane();
+		tabs.setBackground(foregroundGrey);
+		tabs.setForeground(accentGreen);
+		UIManager.put("TabbedPane.selected", backgroundGrey);
+		UIManager.put("TabbedPane.contentAreaColor", Color.BLACK);
+	    UIManager.put("TabbedPane.background", Color.RED);
+	    //UIManager.put("TabbedPane.shadow", Color.RED);
+	    //UIManager.put("TabbedPane.borderColor", foregroundGrey);
+	    UIManager.put("TabbedPane.darkShadow", backgroundGrey);
+	    //UIManager.put("TabbedPane.light", Color.BLACK);
+	    //UIManager.put("TabbedPane.highlight", Color.RED);
+	    UIManager.put("TabbedPane.focus", accentGreen);
+	    //UIManager.put("TabbedPane.unselectedBackground", Color.RED);
+	    UIManager.put("TabbedPane.selectHighlight", Color.BLACK);
+	    //UIManager.put("TabbedPane.tabAreaBackground", Color.RED);
+	    UIManager.put("TabbedPane.borderHightlightColor", foregroundGrey);
+	    UIManager.put("TabbedPane.contentBorderInsets", new Insets(0, 0, 0, 0));
 		
+		SwingUtilities.updateComponentTreeUI(tabs);
+		//tabs.setForeground(new Color(0, 127, 47));
+		
+		
+		ImageIcon updateIcon = new ImageIcon ("circular-arrow-1small.png");
+		ImageIcon searchIcon = new ImageIcon ("loupesmall.png");
+		
+
 		// Add Search Panel
 		JComponent searchPanel = createSearchPanel();
-		tabs.addTab("Search", searchPanel);
+		tabs.addTab("Search", searchIcon, searchPanel);
 		
 		
 		// Add Update Panel
 		JComponent updatePanel = createUpdatePanel();
-		tabs.addTab("Update", updatePanel);
+		tabs.addTab("Update", updateIcon, updatePanel);
 
 		
 		createAndShowGUI(tabs);
@@ -81,7 +114,7 @@ public class GUI extends JFrame {
 		JPanel p = new JPanel(true);
 		GroupLayout gl = new GroupLayout (p);
 		p.setLayout(gl);
-		p.setBackground(c);
+		p.setBackground(backgroundGrey);
 		
 		
 		
@@ -172,7 +205,7 @@ public class GUI extends JFrame {
 		JPanel p = new JPanel(true);
 		GroupLayout gl = new GroupLayout (p);
 		p.setLayout(gl);
-		//p.setBackground(new Color);
+		p.setBackground(backgroundGrey);
 		
 		// Init Components
 		JTextField searchField = new JTextField();
@@ -182,8 +215,8 @@ public class GUI extends JFrame {
 		boolean [] selected = new boolean [1];
 		selected[0] = false;
 		
+		// Detect selection to allow overwrite
 		searchField.addCaretListener(new CaretListener(){
-
 			@Override
 			public void caretUpdate(CaretEvent e) {
 				
@@ -201,11 +234,14 @@ public class GUI extends JFrame {
 		searchField.addKeyListener(new KeyAdapter() {
 	        @Override
 	        public void keyTyped(KeyEvent e) {
-	            if (!selected[0] && (searchField.getText().length() >= 10 || !Character.isDigit(e.getKeyChar()))){
+	            if (!Character.isDigit(e.getKeyChar())|| !selected[0] && (searchField.getText().length() >= 10)){
 	                e.consume();
 	            }
 	            if (e.getKeyChar() == KeyEvent.VK_ENTER){
 	            	searchButton.doClick();
+	            }
+	            if (searchField.getText().length() > 10){
+	            	searchField.setText(searchField.getText().substring(0, 10));
 	            }
 	        }
 		});
@@ -222,7 +258,7 @@ public class GUI extends JFrame {
 					query = searchField.getText();
 				}
 				else {
-					JOptionPane.showMessageDialog(GUI.this, "Invalid input, student number must be 9 or 10 digits in length.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(GUI.this, "Student number must be 9 or 10 digits in length.", "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
@@ -244,16 +280,23 @@ public class GUI extends JFrame {
 		
 		
 		//LAYOUT
-		
+		// SET component appearance
 		gl.setAutoCreateContainerGaps(true);
 		gl.setAutoCreateGaps(true);
 		searchField.setFont(new Font("Consolas", Font.BOLD, 24));
 		//searchField.setOpaque(false);
 		searchField.setBorder(BorderFactory.createEmptyBorder());
+		searchButton.setBorder(BorderFactory.createEmptyBorder());
+		searchButton.setBackground(foregroundGrey);
+		searchButton.setForeground(Color.WHITE);
+	    UIManager.put("Button.select", accentGreen);
+	    UIManager.put("Button.highlight", backgroundGrey);
+	    
+		SwingUtilities.updateComponentTreeUI(searchButton);
 		
 		gl.setHorizontalGroup(gl.createSequentialGroup()
 			.addComponent(searchField, 200,200,200)
-			.addComponent(searchButton)
+			.addComponent(searchButton, 100, 100, 100)
 		);
 
 		
@@ -261,8 +304,9 @@ public class GUI extends JFrame {
 			.addGap(40)
 			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
 				.addComponent(searchField)
-				.addComponent(searchButton)
+				.addComponent(searchButton, 60, 60, 60)
 			)
+			.addGap(40)
 		);
 		
 		return p;
@@ -388,6 +432,8 @@ public class GUI extends JFrame {
 	
 	private File selectedFile;
 	
+	
+	// 
 	public JFrame createFileImport() {
 		JFrame fileFrame = new JFrame();
 		JPanel mainPanel = new JPanel();
