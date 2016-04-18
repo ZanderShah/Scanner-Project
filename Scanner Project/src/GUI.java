@@ -31,74 +31,77 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
 public class GUI extends JFrame {
-	
+
 	private BinaryTree<String, Student> students;
-	
+
 	/**
 	 * Create the GUI and show it. For thread safety, this method should be
 	 * invoked from the event-dispatching thread.
 	 */
-	
-	Color accentGreen = new Color (124, 218, 52);
-	Color backgroundGrey = new Color (100, 100, 100);
-	Color foregroundGrey = new Color (150, 150, 150);
-	
+
+	Color accentGreen = new Color(124, 218, 52);
+	Color backgroundGrey = new Color(100, 100, 100);
+	Color foregroundGrey = new Color(150, 150, 150);
+
 	public GUI() {
 		loadDatabase();
-		
+
 		JTabbedPane tabs = new JTabbedPane();
 		tabs.setBackground(foregroundGrey);
 		tabs.setForeground(accentGreen);
 		UIManager.put("TabbedPane.selected", backgroundGrey);
 		UIManager.put("TabbedPane.contentAreaColor", Color.BLACK);
-	    UIManager.put("TabbedPane.background", Color.RED);
-	    //UIManager.put("TabbedPane.shadow", Color.RED);
-	    //UIManager.put("TabbedPane.borderColor", foregroundGrey);
-	    UIManager.put("TabbedPane.darkShadow", backgroundGrey);
-	    //UIManager.put("TabbedPane.light", Color.BLACK);
-	    //UIManager.put("TabbedPane.highlight", Color.RED);
-	    UIManager.put("TabbedPane.focus", accentGreen);
-	    //UIManager.put("TabbedPane.unselectedBackground", Color.RED);
-	    UIManager.put("TabbedPane.selectHighlight", Color.BLACK);
-	    //UIManager.put("TabbedPane.tabAreaBackground", Color.RED);
-	    UIManager.put("TabbedPane.borderHightlightColor", foregroundGrey);
-	    UIManager.put("TabbedPane.contentBorderInsets", new Insets(0, 0, 0, 0));
-		
+		UIManager.put("TabbedPane.background", Color.RED);
+		// UIManager.put("TabbedPane.shadow", Color.RED);
+		// UIManager.put("TabbedPane.borderColor", foregroundGrey);
+		UIManager.put("TabbedPane.darkShadow", backgroundGrey);
+		// UIManager.put("TabbedPane.light", Color.BLACK);
+		// UIManager.put("TabbedPane.highlight", Color.RED);
+		UIManager.put("TabbedPane.focus", accentGreen);
+		// UIManager.put("TabbedPane.unselectedBackground", Color.RED);
+		UIManager.put("TabbedPane.selectHighlight", Color.BLACK);
+		// UIManager.put("TabbedPane.tabAreaBackground", Color.RED);
+		UIManager.put("TabbedPane.borderHightlightColor", foregroundGrey);
+		UIManager.put("TabbedPane.contentBorderInsets", new Insets(0, 0, 0, 0));
+
 		SwingUtilities.updateComponentTreeUI(tabs);
-		//tabs.setForeground(new Color(0, 127, 47));
-		
-		
-		ImageIcon updateIcon = new ImageIcon ("circular-arrow-1small.png");
-		ImageIcon searchIcon = new ImageIcon ("loupesmall.png");
-		
+		// tabs.setForeground(new Color(0, 127, 47));
+
+		ImageIcon updateIcon = new ImageIcon("circular-arrow-1small.png");
+		ImageIcon searchIcon = new ImageIcon("loupesmall.png");
 
 		// Add Search Panel
 		JComponent searchPanel = createSearchPanel();
 		tabs.addTab("Search", searchIcon, searchPanel);
-		
-		
+
 		// Add Update Panel
 		JComponent updatePanel = createUpdatePanel();
 		tabs.addTab("Update", updateIcon, updatePanel);
 
 		createAndShowGUI(tabs);
 	}
-	
+
 	public void loadDatabase() {
 		students = new BinaryTree<String, Student>();
-		
+
 		KeyGenerator keygen = null;
 		try {
 			keygen = KeyGenerator.getInstance("DES");
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
-		keygen.init(new SecureRandom(new byte[] {1, 2, 3, 4, 5})); // 100% random and secure key
-		
+		keygen.init(new SecureRandom(new byte[] { 1, 2, 3, 4, 5 })); // 100%
+																		// random
+																		// and
+																		// secure
+																		// key
+
 		FileIO.setKey(keygen.generateKey());
-		
+
 		try {
-			FileIO.readCSV(students, FileIO.readFormatSpecification(new File("config")), FileIO.readEncrypted(new File("data")));
+			FileIO.readCSV(students,
+					FileIO.readFormatSpecification(new File("config")),
+					FileIO.readEncrypted(new File("data")));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			// show update dialog
@@ -106,236 +109,235 @@ public class GUI extends JFrame {
 			e.printStackTrace();
 		}
 	}
-	
-	Color c = new Color ((int)(Math.random()*255), (int)(Math.random()*255), (int)(Math.random()*255));
-	
+
+	Color c = new Color((int) (Math.random() * 255),
+			(int) (Math.random() * 255), (int) (Math.random() * 255));
+
 	String username = "Empty";
-	
+
 	String query = "";
-	
-	//boolean infoOpen = false;
-	
-	
+
+	// boolean infoOpen = false;
+
 	// Create update layout
 	private JComponent createUpdatePanel() {
 		JPanel p = new JPanel(true);
-		GroupLayout gl = new GroupLayout (p);
+		GroupLayout gl = new GroupLayout(p);
 		p.setLayout(gl);
 		p.setBackground(backgroundGrey);
-		
-		JButton quitButton = new JButton ("Quit");
-		JButton updateButton = new JButton ("Update Database");
-		JButton colorButton = new JButton ("Change Color");
+
+		JButton quitButton = new JButton("Quit");
+		JButton updateButton = new JButton("Update Database");
+		JButton colorButton = new JButton("Change Color");
 		colorButton.setToolTipText("Changes the background colour");
 		JTextField usernameField = new JTextField("Username");
-		JLabel usernameLabel = new JLabel (username);
-		
-		
-		
+		JLabel usernameLabel = new JLabel(username);
+
 		quitButton.addActionListener(new quitListener());
-		updateButton.addActionListener(new ActionListener () {
+		updateButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFrame file = new FileUpdateFrame(GUI.this);
 				file.setVisible(true);
 			}
-			
+
 		});
-		colorButton.addActionListener(new ActionListener () {
+		colorButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				c = new Color ((int)(Math.random()*255), (int)(Math.random()*255), (int)(Math.random()*255));
+				c = new Color((int) (Math.random() * 255),
+						(int) (Math.random() * 255),
+						(int) (Math.random() * 255));
 				p.setBackground(c);
 			}
-			
+
 		});
-		
+
 		// LAYOUT
-		
+
 		gl.setAutoCreateContainerGaps(false);
-		
-		gl.setHorizontalGroup(gl.createSequentialGroup()
-			.addGroup(gl.createSequentialGroup()
-				.addComponent(usernameLabel)
-			)
-			.addGap(10)
-			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(usernameField)
-				.addComponent(updateButton)
-			)
-			.addGap(5)
-			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(colorButton)
-				.addComponent(quitButton)
-			)
-			.addGap(20)
-				
+
+		gl.setHorizontalGroup(gl
+				.createSequentialGroup()
+				.addGroup(
+						gl.createSequentialGroup().addComponent(usernameLabel))
+				.addGap(10)
+				.addGroup(
+						gl.createParallelGroup(GroupLayout.Alignment.LEADING)
+								.addComponent(usernameField)
+								.addComponent(updateButton))
+				.addGap(5)
+				.addGroup(
+						gl.createParallelGroup(GroupLayout.Alignment.LEADING)
+								.addComponent(colorButton)
+								.addComponent(quitButton)).addGap(20)
+
 		);
 
-		
-		gl.setVerticalGroup(gl.createParallelGroup()
-			.addGap(0)
-			.addGroup(gl.createSequentialGroup()
-				.addGap(50)
-				.addComponent(usernameLabel)
-				.addGap(50)
-				)
-			.addGroup(gl.createSequentialGroup()
-				.addGap(5)
-				.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(usernameField)
-					.addComponent(colorButton)
-				)
-				.addGap(5)
-				.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addComponent(updateButton)
-					.addComponent(quitButton)
-				)
-				.addGap(20)
-			)
-		);
-		
+		gl.setVerticalGroup(gl
+				.createParallelGroup()
+				.addGap(0)
+				.addGroup(
+						gl.createSequentialGroup().addGap(50)
+								.addComponent(usernameLabel).addGap(50))
+				.addGroup(
+						gl.createSequentialGroup()
+								.addGap(5)
+								.addGroup(
+										gl.createParallelGroup(
+												GroupLayout.Alignment.BASELINE)
+												.addComponent(usernameField)
+												.addComponent(colorButton))
+								.addGap(5)
+								.addGroup(
+										gl.createParallelGroup(
+												GroupLayout.Alignment.BASELINE)
+												.addComponent(updateButton)
+												.addComponent(quitButton))
+								.addGap(20)));
+
 		return p;
 	}
-	
-	
-	
+
 	// Create search layout
 	private JComponent createSearchPanel() {
 		JPanel p = new JPanel(true);
-		GroupLayout gl = new GroupLayout (p);
+		GroupLayout gl = new GroupLayout(p);
 		p.setLayout(gl);
 		p.setBackground(backgroundGrey);
-		
+
 		// Init Components
 		JTextField searchField = new JTextField();
-		JButton searchButton = new JButton ("Search");
-		//searchButton.setMnemonic(KeyEvent.VK_A);
+		JButton searchButton = new JButton("Search");
+		// searchButton.setMnemonic(KeyEvent.VK_A);
 
-		boolean [] selected = new boolean [1];
+		boolean[] selected = new boolean[1];
 		selected[0] = false;
-		
+
 		// Detect selection to allow overwrite
-		searchField.addCaretListener(new CaretListener(){
+		searchField.addCaretListener(new CaretListener() {
 			@Override
 			public void caretUpdate(CaretEvent e) {
-				
-				if (e.getDot() == e.getMark()){
+
+				if (e.getDot() == e.getMark()) {
 					selected[0] = false;
-				}
-				else{
+				} else {
 					selected[0] = true;
 				}
 			}
-			
+
 		});
-		
+
 		// Limit input to 10 characters
 		searchField.addKeyListener(new KeyAdapter() {
-	        @Override
-	        public void keyTyped(KeyEvent e) {
-	            if (!Character.isDigit(e.getKeyChar())|| !selected[0] && (searchField.getText().length() >= 10)){
-	                e.consume();
-	            }
-	            if (e.getKeyChar() == KeyEvent.VK_ENTER){
-	            	searchButton.doClick();
-	            }
-	            if (searchField.getText().length() > 10){
-	            	searchField.setText(searchField.getText().substring(0, 10));
-	            }
-	        }
-		});
-		
-		// Search Button 
-		searchButton.addActionListener(new ActionListener () {
-			public void actionPerformed(ActionEvent e) {
-				
-				//check input
-				if (searchField.getText().length() == 9){
-					query = "0" + searchField.getText();
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if (!Character.isDigit(e.getKeyChar()) || !selected[0]
+						&& (searchField.getText().length() >= 10)) {
+					e.consume();
 				}
-				else if (searchField.getText().length() == 10){
-					query = searchField.getText();
+				if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+					searchButton.doClick();
 				}
-				else {
-					JOptionPane.showMessageDialog(GUI.this, "Student number must be 9 or 10 digits in length.", "Error", JOptionPane.ERROR_MESSAGE);
-				}
-				
-				System.out.println("Search: " + query);
-				
-				// Search database
-				Student result = students.getValue(query);
-				
-				// Open information window
-				if (result != null) {
-					JFrame infoFrame = createInfoFrame(result);
-					infoFrame.addWindowListener(new infoWindowListener(searchField));
-				} else {
-					JOptionPane.showMessageDialog(GUI.this, "The student was not found in the database.", "Error", JOptionPane.ERROR_MESSAGE);
+				if (searchField.getText().length() > 10) {
+					searchField.setText(searchField.getText().substring(0, 10));
 				}
 			}
-				
 		});
-		
-		
-		//LAYOUT
+
+		// Search Button
+		searchButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				// check input
+				if (searchField.getText().length() == 9
+						|| searchField.getText().length() == 10) {
+					if (searchField.getText().length() == 9) {
+						query = "0" + searchField.getText();
+					} else if (searchField.getText().length() == 10) {
+						query = searchField.getText();
+					}
+
+					System.out.println("Search: " + query);
+
+					// Search database
+					Student result = students.getValue(query);
+
+					// Open information window
+					if (result != null) {
+						JFrame infoFrame = createInfoFrame(result);
+						infoFrame.addWindowListener(new infoWindowListener(
+								searchField));
+					} else {
+						JOptionPane.showMessageDialog(GUI.this,
+								"The student was not found in the database.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				} else {
+					JOptionPane.showMessageDialog(GUI.this,
+							"Student number must be 9 or 10 digits in length.",
+							"Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+
+		});
+
+		// LAYOUT
 		// SET component appearance
 		gl.setAutoCreateContainerGaps(true);
 		gl.setAutoCreateGaps(true);
 		searchField.setFont(new Font("Consolas", Font.BOLD, 24));
-		//searchField.setOpaque(false);
+		searchButton.setFont(new Font("Consolas", Font.BOLD, 24));
+		// searchField.setOpaque(false);
 		searchField.setBorder(BorderFactory.createEmptyBorder());
 		searchButton.setBorder(BorderFactory.createEmptyBorder());
 		searchButton.setBackground(foregroundGrey);
-		searchButton.setForeground(Color.WHITE);
-	    UIManager.put("Button.select", accentGreen);
-	    UIManager.put("Button.highlight", backgroundGrey);
-	    
-		SwingUtilities.updateComponentTreeUI(searchButton);
-		
-		gl.setHorizontalGroup(gl.createSequentialGroup()
-			.addComponent(searchField, 200,200,200)
-			.addComponent(searchButton, 100, 100, 100)
-		);
+		searchButton.setForeground(backgroundGrey);
+		UIManager.put("Button.select", accentGreen);
+		UIManager.put("Button.highlight", backgroundGrey);
+		UIManager.put("Button.select", accentGreen);
 
-		
-		gl.setVerticalGroup(gl.createSequentialGroup()
-			.addGap(40)
-			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
-				.addComponent(searchField)
-				.addComponent(searchButton, 60, 60, 60)
-			)
-			.addGap(40)
-		);
-		
+		SwingUtilities.updateComponentTreeUI(searchButton);
+
+		gl.setHorizontalGroup(gl.createSequentialGroup()
+				.addComponent(searchField, 200, 200, 200)
+				.addComponent(searchButton, 120, 120, 120));
+
+		gl.setVerticalGroup(gl
+				.createSequentialGroup()
+				.addGap(40)
+				.addGroup(
+						gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+								.addComponent(searchField)
+								.addComponent(searchButton, 60, 60, 60))
+				.addGap(40));
+
 		return p;
 	}
-	
+
 	private void createAndShowGUI(JComponent tabs) {
-		//Create and set up the window.
-//		JFrame frame = new JFrame("Student Database");
+		// Create and set up the window.
+		// JFrame frame = new JFrame("Student Database");
 		this.setTitle("Student Database");
-		
-//		frame.add(tabs, BorderLayout.CENTER);
+
+		// frame.add(tabs, BorderLayout.CENTER);
 		this.add(tabs, BorderLayout.CENTER);
-		
-		
-		//Display the window.
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		// Display the window.
+		// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//frame.setSize(300, 200);
-//		frame.pack();
+		// frame.setSize(300, 200);
+		// frame.pack();
 		this.pack();
-//		frame.setVisible(true);
+		// frame.setVisible(true);
 		this.setVisible(true);
 	}
-	
-	
+
 	// Create Student Information Frame
 	private JFrame createInfoFrame(Student s) {
-		
+
 		// data labels
 		JLabel nameLabel = new JLabel(s.getFirst() + " " + s.getLast());
 		nameLabel.setFont(new Font("Calibri", Font.BOLD, 20));
@@ -351,7 +353,7 @@ public class GUI extends JFrame {
 		addressLabel2.setFont(new Font("Calibri", Font.PLAIN, 16));
 		JLabel emailLabel2 = new JLabel(s.getEmail());
 		emailLabel2.setFont(new Font("Calibri", Font.PLAIN, 16));
-		
+
 		// regular labels
 		JLabel studentNoLabel1 = new JLabel("Student No.");
 		studentNoLabel1.setFont(new Font("Calibri", Font.BOLD, 16));
@@ -365,99 +367,98 @@ public class GUI extends JFrame {
 		addressLabel1.setFont(new Font("Calibri", Font.BOLD, 16));
 		JLabel emailLabel1 = new JLabel("Email");
 		emailLabel1.setFont(new Font("Calibri", Font.BOLD, 16));
-		
-		
-		JPanel p = new JPanel ();
+
+		JPanel p = new JPanel();
 		GroupLayout gl = new GroupLayout(p);
 		p.setLayout(gl);
 		gl.setAutoCreateGaps(true);
 		gl.setAutoCreateContainerGaps(true);
-		gl.setHorizontalGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)
-			.addComponent(nameLabel)
-			.addGroup(gl.createSequentialGroup()
-				.addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)
-					.addComponent(studentNoLabel1)
-					.addComponent(passwordLabel1)
-					.addComponent(gradeLabel1)
-					.addComponent(homeroomLabel1)
-					.addComponent(addressLabel1)
-					.addComponent(emailLabel1)
-				)
-				.addGap(50)
-				.addGroup(gl.createParallelGroup(GroupLayout.Alignment.TRAILING)
-					.addComponent(studentNoLabel2)
-					.addComponent(passwordLabel2)
-					.addComponent(gradeLabel2)
-					.addComponent(homeroomLabel2)
-					.addComponent(addressLabel2)
-					.addComponent(emailLabel2)
-				)
-			)
-		);
-		
-		gl.setVerticalGroup(gl.createSequentialGroup()
-			.addComponent(nameLabel)
-			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
-				.addComponent(studentNoLabel1)
-				.addComponent(studentNoLabel2)
-			)
-			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
-				.addComponent(passwordLabel1)
-				.addComponent(passwordLabel2)
-			)
-			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
-				.addComponent(gradeLabel1)
-				.addComponent(gradeLabel2)
-			)
-			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
-				.addComponent(homeroomLabel1)
-				.addComponent(homeroomLabel2)
-			)
-			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
-				.addComponent(addressLabel1)
-				.addComponent(addressLabel2)
-			)
-			.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
-				.addComponent(emailLabel1)
-				.addComponent(emailLabel2)
-			)
-		);
-		
+		gl.setHorizontalGroup(gl
+				.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addComponent(nameLabel)
+				.addGroup(
+						gl.createSequentialGroup()
+								.addGroup(
+										gl.createParallelGroup(
+												GroupLayout.Alignment.LEADING)
+												.addComponent(studentNoLabel1)
+												.addComponent(passwordLabel1)
+												.addComponent(gradeLabel1)
+												.addComponent(homeroomLabel1)
+												.addComponent(addressLabel1)
+												.addComponent(emailLabel1))
+								.addGap(50)
+								.addGroup(
+										gl.createParallelGroup(
+												GroupLayout.Alignment.TRAILING)
+												.addComponent(studentNoLabel2)
+												.addComponent(passwordLabel2)
+												.addComponent(gradeLabel2)
+												.addComponent(homeroomLabel2)
+												.addComponent(addressLabel2)
+												.addComponent(emailLabel2))));
+
+		gl.setVerticalGroup(gl
+				.createSequentialGroup()
+				.addComponent(nameLabel)
+				.addGroup(
+						gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+								.addComponent(studentNoLabel1)
+								.addComponent(studentNoLabel2))
+				.addGroup(
+						gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+								.addComponent(passwordLabel1)
+								.addComponent(passwordLabel2))
+				.addGroup(
+						gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+								.addComponent(gradeLabel1)
+								.addComponent(gradeLabel2))
+				.addGroup(
+						gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+								.addComponent(homeroomLabel1)
+								.addComponent(homeroomLabel2))
+				.addGroup(
+						gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+								.addComponent(addressLabel1)
+								.addComponent(addressLabel2))
+				.addGroup(
+						gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+								.addComponent(emailLabel1)
+								.addComponent(emailLabel2)));
+
 		JFrame infoFrame = new JFrame("Student Information");
 		infoFrame.setVisible(true);
 		infoFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		//infoFrame.setSize(400, 300);
+		// infoFrame.setSize(400, 300);
 		infoFrame.add(p);
 		infoFrame.pack();
 
-		
 		return infoFrame;
 	}
-
 
 	public static void main(String[] args) {
 		// Schedule a job for the event-dispatching thread:
 		// creating and showing this application's GUI.
-//		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-//			public void run() {
-//				GUI a = new GUI();
-//			}
-//		});
+		// javax.swing.SwingUtilities.invokeLater(new Runnable() {
+		// public void run() {
+		// GUI a = new GUI();
+		// }
+		// });
 		GUI g = new GUI();
 		g.setVisible(true);
 	}
-	
+
 	class quitListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
 			System.exit(0);
 		}
 	}
 
-	class infoWindowListener implements WindowListener{
-		
+	class infoWindowListener implements WindowListener {
+
 		JTextField field;
-		
-		infoWindowListener(JTextField field){
+
+		infoWindowListener(JTextField field) {
 			this.field = field;
 		}
 
@@ -490,5 +491,5 @@ public class GUI extends JFrame {
 		public void windowOpened(WindowEvent e) {
 		}
 	}
-	
+
 }
