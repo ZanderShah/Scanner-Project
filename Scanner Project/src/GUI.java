@@ -1,7 +1,9 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -42,6 +44,10 @@ public class GUI extends JFrame {
 	Color accentGreen = new Color(124, 218, 52);
 	Color backgroundGrey = new Color(100, 100, 100);
 	Color foregroundGrey = new Color(150, 150, 150);
+	
+	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	int screenWidth = (int) screenSize.getWidth();
+	int screenHeight = (int) screenSize.getHeight();
 
 	public GUI() {
 		loadDatabase();
@@ -297,22 +303,24 @@ public class GUI extends JFrame {
 		searchButton.setForeground(backgroundGrey);
 		UIManager.put("Button.select", accentGreen);
 		UIManager.put("Button.highlight", backgroundGrey);
-		UIManager.put("Button.select", accentGreen);
+		UIManager.put("TextField.caretForeground", Color.BLACK);
+		UIManager.put("TextField.inactiveBackground", foregroundGrey);
 
 		SwingUtilities.updateComponentTreeUI(searchButton);
+		SwingUtilities.updateComponentTreeUI(searchField);
 
 		gl.setHorizontalGroup(gl.createSequentialGroup()
+				.addGap((screenWidth-200-120)/2)
 				.addComponent(searchField, 200, 200, 200)
 				.addComponent(searchButton, 120, 120, 120));
 
 		gl.setVerticalGroup(gl
 				.createSequentialGroup()
-				.addGap(40)
+				.addGap(Math.min(screenHeight/2, 200))
 				.addGroup(
 						gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
 								.addComponent(searchField)
-								.addComponent(searchButton, 60, 60, 60))
-				.addGap(40));
+								.addComponent(searchButton, 60, 60, 60)));
 
 		return p;
 	}
@@ -321,17 +329,15 @@ public class GUI extends JFrame {
 		// Create and set up the window.
 		// JFrame frame = new JFrame("Student Database");
 		this.setTitle("Student Database");
+		this.setUndecorated(true);
 
 		// frame.add(tabs, BorderLayout.CENTER);
 		this.add(tabs, BorderLayout.CENTER);
 
 		// Display the window.
-		// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		// frame.setSize(300, 200);
-		// frame.pack();
-		this.pack();
-		// frame.setVisible(true);
+		this.setSize(screenWidth, screenHeight);
+		//this.pack();
 		this.setVisible(true);
 	}
 
@@ -369,6 +375,7 @@ public class GUI extends JFrame {
 		emailLabel1.setFont(new Font("Calibri", Font.BOLD, 16));
 
 		JPanel p = new JPanel();
+		p.setBackground(backgroundGrey);
 		GroupLayout gl = new GroupLayout(p);
 		p.setLayout(gl);
 		gl.setAutoCreateGaps(true);
