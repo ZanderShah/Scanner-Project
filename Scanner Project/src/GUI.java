@@ -1,6 +1,5 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -9,35 +8,27 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
+import javax.crypto.KeyGenerator;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.BevelBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
 
 public class GUI extends JFrame {
 	
@@ -53,13 +44,7 @@ public class GUI extends JFrame {
 	Color foregroundGrey = new Color (150, 150, 150);
 	
 	public GUI() {
-
-		students = new BinaryTree<String, Student>();
-		
-		FormatSpecification fs = new FormatSpecification(new int[] {
-				Fields.USERNAME, Fields.FIRST_NAME, Fields.LAST_NAME,
-				Fields.IGNORE, Fields.GRADE, Fields.HOMEROOM,
-				Fields.PASSWORD}, 1);
+		loadDatabase();
 		
 		JTabbedPane tabs = new JTabbedPane();
 		tabs.setBackground(foregroundGrey);
@@ -96,8 +81,30 @@ public class GUI extends JFrame {
 		JComponent updatePanel = createUpdatePanel();
 		tabs.addTab("Update", updateIcon, updatePanel);
 
-		
 		createAndShowGUI(tabs);
+	}
+	
+	public void loadDatabase() {
+		students = new BinaryTree<String, Student>();
+		
+		KeyGenerator keygen = null;
+		try {
+			keygen = KeyGenerator.getInstance("DES");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		keygen.init(new SecureRandom(new byte[] {1, 2, 3, 4, 5})); // 100% random and secure key
+		
+		FileIO.setKey(keygen.generateKey());
+		
+		try {
+			FileIO.readCSV(students, FileIO.readFormatSpecification(new File("config")), FileIO.readEncrypted(new File("data")));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			// show update dialog
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	Color c = new Color ((int)(Math.random()*255), (int)(Math.random()*255), (int)(Math.random()*255));
@@ -116,8 +123,6 @@ public class GUI extends JFrame {
 		p.setLayout(gl);
 		p.setBackground(backgroundGrey);
 		
-		
-		
 		JButton quitButton = new JButton ("Quit");
 		JButton updateButton = new JButton ("Update Database");
 		JButton colorButton = new JButton ("Change Color");
@@ -132,10 +137,7 @@ public class GUI extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-//				username = usernameField.getText();
-//				usernameLabel.setText(username);
-				
-				JFrame file = createFileImport();
+				JFrame file = new FileUpdateFrame(GUI.this);
 				file.setVisible(true);
 			}
 			
@@ -259,7 +261,6 @@ public class GUI extends JFrame {
 				}
 				else {
 					JOptionPane.showMessageDialog(GUI.this, "Student number must be 9 or 10 digits in length.", "Error", JOptionPane.ERROR_MESSAGE);
-					return;
 				}
 				
 				System.out.println("Search: " + query);
@@ -314,16 +315,21 @@ public class GUI extends JFrame {
 	
 	private void createAndShowGUI(JComponent tabs) {
 		//Create and set up the window.
-		JFrame frame = new JFrame("Student Database");
+//		JFrame frame = new JFrame("Student Database");
+		this.setTitle("Student Database");
 		
-		frame.add(tabs, BorderLayout.CENTER);
+//		frame.add(tabs, BorderLayout.CENTER);
+		this.add(tabs, BorderLayout.CENTER);
 		
 		
 		//Display the window.
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//frame.setSize(300, 200);
-		frame.pack();
-		frame.setVisible(true);
+//		frame.pack();
+		this.pack();
+//		frame.setVisible(true);
+		this.setVisible(true);
 	}
 	
 	
@@ -425,110 +431,20 @@ public class GUI extends JFrame {
 		infoFrame.pack();
 
 		
-
-		
 		return infoFrame;
 	}
-	
-	private File selectedFile;
-	
-	
-	// 
-	public JFrame createFileImport() {
-		JFrame fileFrame = new JFrame();
-		JPanel mainPanel = new JPanel();
-		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-		
-		JPanel columnSelection = new JPanel();
-		JPanel dropDown = new JPanel();
-		columnSelection.add(dropDown);
-		JTable preview = new JTable();
-		columnSelection.add(preview);
-		
-		JPanel fileSelect = new JPanel();
-		fileSelect.setLayout(new FlowLayout());
-		JFileChooser jfc = new JFileChooser();
-		JLabel currentFile = new JLabel("Current file: ");
-		JButton select = new JButton("Choose file...");
-		
-		select.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int status = jfc.showOpenDialog(GUI.this);
-				if (status == JFileChooser.APPROVE_OPTION) {
-					selectedFile = jfc.getSelectedFile();
-					currentFile.setText("Current file: " + selectedFile.getPath());
-					dropDown.removeAll();
-					int numCols = countColumns(selectedFile);
-					for (int i = 0; i < numCols; i++) {
-						dropDown.add(makeDropDown());
-					}
-					
-					
-					
-					fileFrame.pack();
-				}
-			}
 
-			private int countColumns(File selectedFile) {
-				try {
-					int cols = 0;
-					BufferedReader br = new BufferedReader(new FileReader(selectedFile));
-					
-					while (br.ready()) {
-						String line = br.readLine();
-						cols = Math.max(cols, line.split(",").length);
-					}
-					return cols;
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				return 0;
-			}
-			
-			private JComboBox<String> makeDropDown() {
-				JComboBox<String> fieldSelect = new JComboBox<String>();
-				fieldSelect.addItem("Username");
-				fieldSelect.addItem("First Name");
-				fieldSelect.addItem("Last Name");
-				fieldSelect.addItem("Grade");
-				fieldSelect.addItem("Homeroom");
-				fieldSelect.addItem("Password");
-				fieldSelect.addItem("Email");
-				fieldSelect.addItem("Address");
-				fieldSelect.addItem("Period 1");
-				fieldSelect.addItem("Period 2");
-				fieldSelect.addItem("Period 3");
-				fieldSelect.addItem("Period 4");
-				fieldSelect.addItem("Period 5");
-				fieldSelect.addItem("Ignore");
-				return fieldSelect;
-			}
-		});
-		fileSelect.add(select);
-		fileSelect.add(currentFile);
-		
-		JPanel options = new JPanel();
-		
-		mainPanel.add(fileSelect);
-		mainPanel.add(columnSelection);
-		mainPanel.add(options);
-		
-		fileFrame.setContentPane(mainPanel);
-		
-		fileFrame.pack();
-		
-		return fileFrame;
-	}
 
 	public static void main(String[] args) {
 		// Schedule a job for the event-dispatching thread:
 		// creating and showing this application's GUI.
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				GUI a = new GUI();
-			}
-		});
+//		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+//			public void run() {
+//				GUI a = new GUI();
+//			}
+//		});
+		GUI g = new GUI();
+		g.setVisible(true);
 	}
 	
 	class quitListener implements ActionListener {
