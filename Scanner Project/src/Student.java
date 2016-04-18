@@ -105,6 +105,15 @@ public class Student implements Comparable<Student>
 	{
 		return address;
 	}
+	
+	/**
+	 * Gets the student's schedule
+	 * 
+	 * @return the student's schedule
+	 */
+	public String[] getSchedule() {
+		return new String[] {p1, p2, p3,p4, p5};
+	}
 
 	public int compareTo(Student student)
 	{

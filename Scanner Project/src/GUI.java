@@ -2,7 +2,6 @@
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,25 +9,21 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.FileNotFoundException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
+import javax.crypto.KeyGenerator;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -43,13 +38,26 @@ public class GUI extends JFrame {
 	 */
 	
 	public GUI() {
-
 		students = new BinaryTree<String, Student>();
 		
-		FormatSpecification fs = new FormatSpecification(new int[] {
-				Fields.USERNAME, Fields.FIRST_NAME, Fields.LAST_NAME,
-				Fields.IGNORE, Fields.GRADE, Fields.HOMEROOM,
-				Fields.PASSWORD}, 1);
+		KeyGenerator keygen = null;
+		try {
+			keygen = KeyGenerator.getInstance("DES");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		keygen.init(new SecureRandom(new byte[] {1, 2, 3, 4, 5})); // 100% random and secure key
+		
+		FileIO.setKey(keygen.generateKey());
+		
+		try {
+			FileIO.readCSV(students, FileIO.readFormatSpecification(new File("config")), FileIO.readEncrypted(new File("data")));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			// show update dialog
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		JTabbedPane tabs = new JTabbedPane();
 		
@@ -62,7 +70,6 @@ public class GUI extends JFrame {
 		JComponent updatePanel = createUpdatePanel();
 		tabs.addTab("Update", updatePanel);
 
-		
 		createAndShowGUI(tabs);
 	}
 	
@@ -81,8 +88,6 @@ public class GUI extends JFrame {
 		GroupLayout gl = new GroupLayout (p);
 		p.setLayout(gl);
 		p.setBackground(c);
-		
-		
 		
 		JButton quitButton = new JButton ("Quit");
 		JButton updateButton = new JButton ("Update Database");
@@ -269,16 +274,21 @@ public class GUI extends JFrame {
 	
 	private void createAndShowGUI(JComponent tabs) {
 		//Create and set up the window.
-		JFrame frame = new JFrame("Student Database");
+//		JFrame frame = new JFrame("Student Database");
+		this.setTitle("Student Database");
 		
-		frame.add(tabs, BorderLayout.CENTER);
+//		frame.add(tabs, BorderLayout.CENTER);
+		this.add(tabs, BorderLayout.CENTER);
 		
 		
 		//Display the window.
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//frame.setSize(300, 200);
-		frame.pack();
-		frame.setVisible(true);
+//		frame.pack();
+		this.pack();
+//		frame.setVisible(true);
+		this.setVisible(true);
 	}
 	
 	
@@ -381,146 +391,17 @@ public class GUI extends JFrame {
 		
 		return infoFrame;
 	}
-	
-	private File selectedFile;
-	private int newLineSkip, newFieldSpecification[];
-	private ArrayList<JComboBox<String>> columns = new ArrayList<JComboBox<String>>();
-	
-	public JFrame createFileImport() {
-				
-		JFrame fileFrame = new JFrame();
-		JPanel mainPanel = new JPanel();
-		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-		
-		JPanel columnSelection = new JPanel();
-		JPanel dropDown = new JPanel();
-		columnSelection.add(dropDown);
-		JTable preview = new JTable();
-		columnSelection.add(preview);
-		
-		JPanel fileSelect = new JPanel();
-		fileSelect.setLayout(new FlowLayout());
-		JFileChooser jfc = new JFileChooser();
-		JLabel currentFile = new JLabel("Current file: ");
-		JButton select = new JButton("Choose file...");
-		
-		select.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int status = jfc.showOpenDialog(GUI.this);
-				if (status == JFileChooser.APPROVE_OPTION) {
-					selectedFile = jfc.getSelectedFile();
-					currentFile.setText("Current file: " + selectedFile.getPath());
-					dropDown.removeAll();
-					int numCols = countColumns(selectedFile);
-					for (int i = 0; i < numCols; i++) {
-						columns.add(makeDropDown());
-						dropDown.add(columns.get(columns.size() - 1));
-					}
-					dropDown.add(lineSkipSelection());
-					
-					fileFrame.pack();
-				}
-			}			
-			
-			private int countColumns(File selectedFile) {
-				try {
-					int cols = 0;
-					BufferedReader br = new BufferedReader(new FileReader(selectedFile));
-					
-					while (br.ready()) {
-						String line = br.readLine();
-						cols = Math.max(cols, line.split(",").length);
-					}
-					return cols;
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				return 0;
-			}
-			
-			private int countRows(File selectedFile) {
-				try {
-					int rows = 0;
-					BufferedReader br = new BufferedReader(new FileReader(selectedFile));
-					
-					while (br.ready()) {
-						br.readLine();
-						rows++;
-					}
-					return rows;
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				return 0;
-			}
-			
-			private JComboBox<String> makeDropDown() {
-				
-				String[] options = { "Username", "First Name", "Last Name", "Grade", "Homeroom", "Password", "Email", "Address", 
-						"Period 1", "Period 2", "Period 3", "Period 4", "Period 5", "Ignore"};
-				newFieldSpecification = new int[options.length];
-				JComboBox<String> fieldSelect = new JComboBox<String>(options);
-				fieldSelect.setSelectedIndex(13);
-				fieldSelect.addActionListener(new ActionListener(){
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						for (int j = 0; j < columns.size(); j++)
-							if (e.getSource() == columns.get(j)) {
-								String option = (String)(((JComboBox<String>)e.getSource()).getSelectedItem());
-								for (int k = 0; k < options.length; k++)
-									if (options[k].equals(option)) {
-										newFieldSpecification[j] = k;
-										System.out.println("Column #" + j + ": " + options[k]);
-									}
-							}
-					}
-				});
-				return fieldSelect;
-			}
-			
-			private JComboBox<Integer> lineSkipSelection() {
-				Integer[] options = new Integer[countRows(selectedFile) + 1];
-				for (int i = 0; i < options.length; i++)
-					options[i] = i;
-				JComboBox<Integer> lineSkip = new JComboBox<Integer>(options);
-				lineSkip.setSelectedIndex(0);
-				lineSkip.addActionListener(new ActionListener(){
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						JComboBox<Integer> info = (JComboBox)e.getSource();
-						int index = (int) info.getSelectedItem();
-						System.out.println("Skipped Lines: " + index);
-						newLineSkip = index;
-					}
-				});
-				return lineSkip;
-			}
-		});
-		fileSelect.add(select);
-		fileSelect.add(currentFile);
-		
-		JPanel options = new JPanel();
-		
-		mainPanel.add(fileSelect);
-		mainPanel.add(columnSelection);
-		mainPanel.add(options);
-		
-		fileFrame.setContentPane(mainPanel);
-		
-		fileFrame.pack();
-		
-		return fileFrame;
-	}
 
 	public static void main(String[] args) {
 		// Schedule a job for the event-dispatching thread:
 		// creating and showing this application's GUI.
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				GUI a = new GUI();
-			}
-		});
+//		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+//			public void run() {
+//				GUI a = new GUI();
+//			}
+//		});
+		GUI g = new GUI();
+		g.setVisible(true);
 	}
 	
 	class quitListener implements ActionListener {

@@ -7,9 +7,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -23,12 +23,11 @@ import javax.swing.JTextField;
 
 public class FileUpdateFrame extends JFrame {
 	private File selectedFile;
-	private int newLineSkip, newFieldSpecification[];
 	private ArrayList<JComboBox<String>> columns = new ArrayList<JComboBox<String>>();
 	
 	public FileUpdateFrame() {
 		JPanel mainPanel = new JPanel();
-		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+		mainPanel.setLayout(new BorderLayout());
 		
 		JPanel columnSelection = new JPanel();
 		columnSelection.setLayout(new BorderLayout());
@@ -56,7 +55,6 @@ public class FileUpdateFrame extends JFrame {
 						dropDown.add(columns.get(columns.size() - 1));
 					}
 					columnSelection.add(dropDown, BorderLayout.NORTH);
-//					dropDown.add(lineSkipSelection());
 
 					String[][] previewData = new String[4][numCols];
 					try {
@@ -103,86 +101,73 @@ public class FileUpdateFrame extends JFrame {
 				return 0;
 			}
 			
-			private JComboBox<String> makeDropDown(int initial) {
+			private JComboBox<String> makeDropDown(int initialValue) {
 				
 				String[] options = { "Username", "First Name", "Last Name", "Grade", "Homeroom", "Password", "Email", "Address", 
 						"Period 1", "Period 2", "Period 3", "Period 4", "Period 5", "Ignore"};
-				newFieldSpecification = new int[options.length];
 				JComboBox<String> fieldSelect = new JComboBox<String>(options);
-				fieldSelect.setSelectedIndex(Math.min(options.length - 1, initial));
-				fieldSelect.addActionListener(new ActionListener(){
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						for (int j = 0; j < columns.size(); j++)
-							if (e.getSource() == columns.get(j)) {
-								String option = (String)(((JComboBox<String>)e.getSource()).getSelectedItem());
-								for (int k = 0; k < options.length; k++)
-									if (options[k].equals(option))
-										newFieldSpecification[j] = k;
-							}
-					}
-				});
+				fieldSelect.setSelectedIndex(Math.min(options.length - 1, initialValue));
 				return fieldSelect;
 			}
-			
-//			private int countRows(File selectedFile) {
-//				try {
-//					int rows = 0;
-//					BufferedReader br = new BufferedReader(new FileReader(selectedFile));
-//					
-//					while (br.ready()) {
-//						br.readLine();
-//						rows++;
-//					}
-//					
-//					br.close();
-//					return rows;
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//				return 0;
-//			}
-			
-//			private JComboBox<Integer> lineSkipSelection() {
-//				Integer[] options = new Integer[countRows(selectedFile) + 1];
-//				for (int i = 0; i < options.length; i++)
-//					options[i] = i;
-//				JComboBox<Integer> lineSkip = new JComboBox<Integer>(options);
-//				lineSkip.setSelectedIndex(0);
-//				lineSkip.addActionListener(new ActionListener(){
-//					@Override
-//					public void actionPerformed(ActionEvent e) {
-//						JComboBox<Integer> info = (JComboBox)e.getSource();
-//						int index = (int) info.getSelectedItem();
-//						newLineSkip = index;
-//					}
-//				});
-//				return lineSkip;
-//			}
 		});
 		fileSelect.add(select);
 		fileSelect.add(currentFile);
 		
 		JPanel options = new JPanel();
-		options.setLayout(new FlowLayout());
-		options.add(new JLabel("Skip lines: "));
+		options.setLayout(new GridLayout());
+		
+		JPanel lineSkipPanel = new JPanel();
+		lineSkipPanel.setLayout(new GridLayout());
+		lineSkipPanel.add(new JLabel("Skip lines: "));
 		JTextField lineSkip = new JTextField();
-		options.add(lineSkip);
-		options.add(new JLabel("Delete source after import: "));
+		lineSkipPanel.add(lineSkip);
+		options.add(lineSkipPanel);
+		
+		JPanel checkBoxPanel = new JPanel();
+		checkBoxPanel.add(new JLabel("Delete source after import: "));
 		JCheckBox delete = new JCheckBox();
-		options.add(delete);
+		checkBoxPanel.add(delete);
+		options.add(checkBoxPanel);
+		
 		JButton save = new JButton("Save");
 		save.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				int[] fields = new int[columns.size()];
+				for (int i = 0; i < columns.size(); i++) {
+					fields[i] = columns.get(i).getSelectedIndex();
+				}
 				
+				int lines = 0;
+				try {
+					lines = Integer.parseInt(lineSkip.getText());
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(FileUpdateFrame.this, "Invalid number of skipped lines.");
+					return;
+				}
+				
+				FormatSpecification fs = new FormatSpecification(fields, lines);
+				
+				try {
+					FileIO.saveFormatSpecification(new File("config"), fs);
+					FileIO.encryptFile(selectedFile, new File("data"));
+					
+					if (delete.isSelected()) {
+						Files.delete(selectedFile.toPath());
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				dispose();
 			}
 		});
 		options.add(save);
 		
-		mainPanel.add(fileSelect);
-		mainPanel.add(columnSelection);
-		mainPanel.add(options);
+		mainPanel.add(fileSelect, BorderLayout.NORTH);
+		mainPanel.add(columnSelection, BorderLayout.CENTER);
+		mainPanel.add(options, BorderLayout.SOUTH);
 		
 		setContentPane(mainPanel);
 		

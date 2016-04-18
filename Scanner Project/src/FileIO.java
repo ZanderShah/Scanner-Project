@@ -2,36 +2,32 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.security.Key;
-import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 
+/**
+ * Provides utility methods for interacting with files
+ * 
+ * @author Callum Moseley
+ * @version April 2016
+ *
+ */
 public class FileIO {
-
-	public static void main(String[] args) throws Exception {
-		
-		FormatSpecification fs = new FormatSpecification(new int[] {
-				Fields.USERNAME, Fields.FIRST_NAME, Fields.LAST_NAME,
-				Fields.GRADE, Fields.HOMEROOM, Fields.PASSWORD, Fields.EMAIL,
-				Fields.ADDRESS, Fields.PERIOD_1, Fields.PERIOD_2,
-				Fields.PERIOD_3, Fields.PERIOD_4, Fields.PERIOD_5 }, 0);
-		
-		KeyGenerator keygen = KeyGenerator.getInstance("DES");
-		keygen.init(56, new SecureRandom(new byte[] {1}));
-		SecretKey key = keygen.generateKey();
-		encryptFile(new File("FullStudentInfo.csv"), new File("encryptedTest"), key);
-		readCSV(new BinaryTree<String, Student>(), fs,
-			readEncrypted(new File("encryptedTest"), key));
+	
+	private static Key k; // key used for encrypting stuff
+	
+	public static void setKey(Key key) {
+		k = key;
 	}
-
+	
 	/**
 	 * Reads an unencrypted CSV file of student data according to the supplied
 	 * format of the file
@@ -49,7 +45,7 @@ public class FileIO {
 		int read = 0;
 		try {
 			br = new BufferedReader(new InputStreamReader(is));
-			for (int i = 0; i < fs.getLines(); i++) {
+			for (int i = 0; i < fs.getLines() && br.ready(); i++) {
 				br.readLine();
 			}
 
@@ -85,14 +81,14 @@ public class FileIO {
 		return read;
 	}
 	
-	public static InputStream readEncrypted(File f, Key k) throws Exception {
+	public static InputStream readEncrypted(File f) throws Exception {
 		Cipher c = Cipher.getInstance("DES/ECB/PKCS5Padding");
 		c.init(Cipher.DECRYPT_MODE, k);
 		CipherInputStream cis = new CipherInputStream(new FileInputStream(f), c);
 		return cis;
 	}
 	
-	public static void encryptFile(File in, File out, Key k) throws Exception {
+	public static void encryptFile(File in, File out) throws Exception {
 		FileInputStream fis = new FileInputStream(in);
 		Cipher c = Cipher.getInstance("DES/ECB/PKCS5Padding");
 		c.init(Cipher.ENCRYPT_MODE, k);
@@ -105,5 +101,30 @@ public class FileIO {
 		
 		fis.close();
 		cos.close();
+	}
+	
+	public static void saveFormatSpecification(File f, FormatSpecification fs) throws IOException {
+		PrintWriter pw = new PrintWriter(f);
+		
+		pw.println(fs.getDefinitions().length);
+		for (int i = 0; i < fs.getDefinitions().length; i++) {
+			pw.println(fs.getDefinitions()[i]);
+		}
+		pw.print(fs.getLines());
+		pw.close();
+	}
+	
+	public static FormatSpecification readFormatSpecification(File f) throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(f));
+		
+		int columns = Integer.parseInt(br.readLine());
+		int[] fields = new int[columns];
+		for (int i = 0; i < columns; i++) {
+			fields[i] = Integer.parseInt(br.readLine());
+		}
+		int skipLines = Integer.parseInt(br.readLine());
+		
+		br.close();
+		return new FormatSpecification(fields, skipLines);
 	}
 }
