@@ -1,3 +1,10 @@
+/**
+ * Node object for the binary tree
+ * @author Alexander Shah
+ *
+ * @param <Key> the key type for the node
+ * @param <Value> the value type for the node
+ */
 public class BinaryTreeNode<Key extends Comparable<Key>, Value extends Comparable<Value>>
 {
 	private Key key;
