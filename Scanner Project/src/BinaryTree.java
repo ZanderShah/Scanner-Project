@@ -1,3 +1,10 @@
+/**
+ * Binary Tree data structure. Supports O(logn) insertion, deletion and query
+ * @author Alexander Shah
+ *
+ * @param <Key> the key type for the tree's nodes
+ * @param <Value> the value type for the tree's nodes
+ */
 public class BinaryTree<Key extends Comparable<Key>, Value extends Comparable<Value>>
 {
 	private BinaryTreeNode<Key, Value> root;
