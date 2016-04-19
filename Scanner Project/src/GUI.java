@@ -268,6 +268,10 @@ public class GUI extends JFrame {
 
 					System.out.println("Search: " + query);
 
+					if (students == null) {
+						JOptionPane.showMessageDialog(GUI.this, "No student database is loaded", "Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
 					// Search database
 					Student result = students.getValue(query);
 
