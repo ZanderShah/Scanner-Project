@@ -440,6 +440,7 @@ public class GUI extends JFrame {
 
 		gl.setVerticalGroup(gl.createSequentialGroup()
 				.addComponent(nameLabel)
+				.addGap(10)
 				.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(studentNoLabel1)
 						.addComponent(studentNoLabel2))
@@ -459,7 +460,9 @@ public class GUI extends JFrame {
 						.addComponent(emailLabel1)
 						.addComponent(emailLabel2)));
 
+		ImageIcon infoIcon = new ImageIcon("open-envelopesmall2.png");
 		JFrame infoFrame = new JFrame("Student Information");
+		infoFrame.setIconImage(infoIcon.getImage());
 		
 		infoFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		// infoFrame.setSize(400, 300);
