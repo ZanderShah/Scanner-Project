@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Timer;
 
 import javax.crypto.KeyGenerator;
 import javax.swing.BorderFactory;
@@ -21,6 +22,7 @@ import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -44,12 +46,13 @@ public class GUI extends JFrame {
 	Color accentGreen = new Color(124, 218, 52);
 	Color backgroundGrey = new Color(100, 100, 100);
 	Color foregroundGrey = new Color(150, 150, 150);
+	Color foregroundLightGrey = new Color(180, 180, 180);
 	
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	int screenWidth = (int) screenSize.getWidth();
 	int screenHeight = (int) screenSize.getHeight();
 
-	public GUI() {
+	public GUI(){
 		loadDatabase();
 
 		JTabbedPane tabs = new JTabbedPane();
@@ -217,7 +220,7 @@ public class GUI extends JFrame {
 		// Init Components
 		JTextField searchField = new JTextField();
 		JButton searchButton = new JButton("Search");
-		// searchButton.setMnemonic(KeyEvent.VK_A);
+		searchButton.setMnemonic(KeyEvent.VK_ENTER);
 
 		boolean[] selected = new boolean[1];
 		selected[0] = false;
@@ -226,14 +229,14 @@ public class GUI extends JFrame {
 		searchField.addCaretListener(new CaretListener() {
 			@Override
 			public void caretUpdate(CaretEvent e) {
-
+				
 				if (e.getDot() == e.getMark()) {
 					selected[0] = false;
 				} else {
 					selected[0] = true;
 				}
 			}
-
+			
 		});
 
 		// Limit input to 10 characters
@@ -276,15 +279,33 @@ public class GUI extends JFrame {
 						JFrame infoFrame = createInfoFrame(result);
 						infoFrame.addWindowListener(new infoWindowListener(
 								searchField));
+						
+						
+						// Auto close after time
+						new Thread(){
+					          @Override
+					          public void run() {
+					               try {
+					                      Thread.sleep(10000); // time after which pop up will be disappeared.
+					                      infoFrame.dispose();
+					               } catch (InterruptedException e) {
+					                      e.printStackTrace();
+					               }
+					          };
+					    }.start();
+					    
+					    
 					} else {
 						JOptionPane.showMessageDialog(GUI.this,
 								"The student was not found in the database.",
 								"Error", JOptionPane.ERROR_MESSAGE);
+						searchField.setText("");
 					}
 				} else {
 					JOptionPane.showMessageDialog(GUI.this,
 							"Student number must be 9 or 10 digits in length.",
 							"Error", JOptionPane.ERROR_MESSAGE);
+					searchField.setText("");
 				}
 			}
 
@@ -340,38 +361,54 @@ public class GUI extends JFrame {
 		//this.pack();
 		this.setVisible(true);
 	}
+	
+	
 
 	// Create Student Information Frame
 	private JFrame createInfoFrame(Student s) {
+		
 
 		// data labels
 		JLabel nameLabel = new JLabel(s.getFirst() + " " + s.getLast());
+		nameLabel.setForeground(Color.WHITE);
 		nameLabel.setFont(new Font("Calibri", Font.BOLD, 20));
 		JLabel studentNoLabel2 = new JLabel(s.getId());
+		studentNoLabel2.setForeground(Color.WHITE);
 		studentNoLabel2.setFont(new Font("Calibri", Font.PLAIN, 16));
 		JLabel passwordLabel2 = new JLabel(s.getPassword());
+		passwordLabel2.setForeground(Color.WHITE);
 		passwordLabel2.setFont(new Font("Calibri", Font.PLAIN, 16));
 		JLabel gradeLabel2 = new JLabel(s.getGrade());
+		gradeLabel2.setForeground(Color.WHITE);
 		gradeLabel2.setFont(new Font("Calibri", Font.PLAIN, 16));
 		JLabel homeroomLabel2 = new JLabel(s.getHomeroom());
+		homeroomLabel2.setForeground(Color.WHITE);
 		homeroomLabel2.setFont(new Font("Calibri", Font.PLAIN, 16));
 		JLabel addressLabel2 = new JLabel(s.getAddress());
+		addressLabel2.setForeground(Color.WHITE);
 		addressLabel2.setFont(new Font("Calibri", Font.PLAIN, 16));
 		JLabel emailLabel2 = new JLabel(s.getEmail());
+		emailLabel2.setForeground(Color.WHITE);
 		emailLabel2.setFont(new Font("Calibri", Font.PLAIN, 16));
 
 		// regular labels
 		JLabel studentNoLabel1 = new JLabel("Student No.");
+		studentNoLabel1.setForeground(foregroundLightGrey);
 		studentNoLabel1.setFont(new Font("Calibri", Font.BOLD, 16));
 		JLabel passwordLabel1 = new JLabel("Password");
+		passwordLabel1.setForeground(foregroundLightGrey);
 		passwordLabel1.setFont(new Font("Calibri", Font.BOLD, 16));
 		JLabel gradeLabel1 = new JLabel("Grade");
+		gradeLabel1.setForeground(foregroundLightGrey);
 		gradeLabel1.setFont(new Font("Calibri", Font.BOLD, 16));
 		JLabel homeroomLabel1 = new JLabel("Homeroom");
+		homeroomLabel1.setForeground(foregroundLightGrey);
 		homeroomLabel1.setFont(new Font("Calibri", Font.BOLD, 16));
 		JLabel addressLabel1 = new JLabel("Address");
+		addressLabel1.setForeground(foregroundLightGrey);
 		addressLabel1.setFont(new Font("Calibri", Font.BOLD, 16));
 		JLabel emailLabel1 = new JLabel("Email");
+		emailLabel1.setForeground(foregroundLightGrey);
 		emailLabel1.setFont(new Font("Calibri", Font.BOLD, 16));
 
 		JPanel p = new JPanel();
@@ -380,65 +417,56 @@ public class GUI extends JFrame {
 		p.setLayout(gl);
 		gl.setAutoCreateGaps(true);
 		gl.setAutoCreateContainerGaps(true);
-		gl.setHorizontalGroup(gl
-				.createParallelGroup(GroupLayout.Alignment.LEADING)
+		gl.setHorizontalGroup(gl.createParallelGroup(GroupLayout.Alignment.CENTER)
 				.addComponent(nameLabel)
-				.addGroup(
-						gl.createSequentialGroup()
-								.addGroup(
-										gl.createParallelGroup(
-												GroupLayout.Alignment.LEADING)
-												.addComponent(studentNoLabel1)
-												.addComponent(passwordLabel1)
-												.addComponent(gradeLabel1)
-												.addComponent(homeroomLabel1)
-												.addComponent(addressLabel1)
-												.addComponent(emailLabel1))
-								.addGap(50)
-								.addGroup(
-										gl.createParallelGroup(
-												GroupLayout.Alignment.TRAILING)
-												.addComponent(studentNoLabel2)
-												.addComponent(passwordLabel2)
-												.addComponent(gradeLabel2)
-												.addComponent(homeroomLabel2)
-												.addComponent(addressLabel2)
-												.addComponent(emailLabel2))));
-
-		gl.setVerticalGroup(gl
-				.createSequentialGroup()
-				.addComponent(nameLabel)
-				.addGroup(
-						gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+				.addGroup(gl.createSequentialGroup()
+						.addGroup(gl.createParallelGroup(
+								GroupLayout.Alignment.LEADING)
 								.addComponent(studentNoLabel1)
-								.addComponent(studentNoLabel2))
-				.addGroup(
-						gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
 								.addComponent(passwordLabel1)
-								.addComponent(passwordLabel2))
-				.addGroup(
-						gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
 								.addComponent(gradeLabel1)
-								.addComponent(gradeLabel2))
-				.addGroup(
-						gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
 								.addComponent(homeroomLabel1)
-								.addComponent(homeroomLabel2))
-				.addGroup(
-						gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
 								.addComponent(addressLabel1)
-								.addComponent(addressLabel2))
-				.addGroup(
-						gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
-								.addComponent(emailLabel1)
-								.addComponent(emailLabel2)));
+								.addComponent(emailLabel1))
+						.addGap(50)
+						.addGroup(gl.createParallelGroup(
+								GroupLayout.Alignment.TRAILING)
+								.addComponent(studentNoLabel2)
+								.addComponent(passwordLabel2)
+								.addComponent(gradeLabel2)
+								.addComponent(homeroomLabel2)
+								.addComponent(addressLabel2)
+								.addComponent(emailLabel2))));
+
+		gl.setVerticalGroup(gl.createSequentialGroup()
+				.addComponent(nameLabel)
+				.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(studentNoLabel1)
+						.addComponent(studentNoLabel2))
+				.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(passwordLabel1)
+						.addComponent(passwordLabel2))
+				.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(gradeLabel1)
+						.addComponent(gradeLabel2))
+				.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(homeroomLabel1)
+						.addComponent(homeroomLabel2))
+				.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(addressLabel1)
+						.addComponent(addressLabel2))
+				.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(emailLabel1)
+						.addComponent(emailLabel2)));
 
 		JFrame infoFrame = new JFrame("Student Information");
-		infoFrame.setVisible(true);
+		
 		infoFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		// infoFrame.setSize(400, 300);
 		infoFrame.add(p);
 		infoFrame.pack();
+		infoFrame.setLocation((screenWidth-infoFrame.getWidth())/2, (screenHeight-infoFrame.getHeight())/2);
+		infoFrame.setVisible(true);
 
 		return infoFrame;
 	}
