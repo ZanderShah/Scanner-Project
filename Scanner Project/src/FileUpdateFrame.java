@@ -22,11 +22,19 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+/**
+ * A JFrame for loading a CSV file as the database, as well as specifying it's format
+ * 
+ * @author Callum Moseley
+ * @version April 2016
+ */
 public class FileUpdateFrame extends JFrame {
 	private File selectedFile;
 	private ArrayList<JComboBox<String>> columns = new ArrayList<JComboBox<String>>();
 	
 	public FileUpdateFrame(GUI gui) {
+		this.setAlwaysOnTop(true);
+		
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 		
@@ -153,17 +161,19 @@ public class FileUpdateFrame extends JFrame {
 					JOptionPane.showMessageDialog(FileUpdateFrame.this, "No file was selected", "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				try {
-					FileIO.saveFormatSpecification(new File("config"), fs);
-					FileIO.encryptFile(selectedFile, new File("data"));
-					
-					if (delete.isSelected()) {
+				
+				if (!FileIO.saveFormatSpecification(new File("config"), fs) ||
+						!FileIO.encryptFile(selectedFile, new File("data"))) {
+					JOptionPane.showMessageDialog(FileUpdateFrame.this, "There was an error saving the file", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if (delete.isSelected()) {
+					try {
 						Files.delete(selectedFile.toPath());
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(FileUpdateFrame.this, "The source file could not be deleted", "Warning", JOptionPane.WARNING_MESSAGE);
 					}
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
 				
 				gui.loadDatabase();

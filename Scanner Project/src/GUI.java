@@ -11,7 +11,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
@@ -50,8 +49,16 @@ public class GUI extends JFrame {
 	int screenHeight = (int) screenSize.getHeight();
 
 	public GUI() {
-		loadDatabase();
+		KeyGenerator keygen = null;
+		try {
+			keygen = KeyGenerator.getInstance("DES");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		keygen.init(new SecureRandom(new byte[] { 1, 2, 3, 4, 5 })); // 100% random and secure key
 
+		FileIO.setKey(keygen.generateKey());
+		
 		JTabbedPane tabs = new JTabbedPane();
 		tabs.setBackground(foregroundGrey);
 		tabs.setForeground(accentGreen);
@@ -85,34 +92,26 @@ public class GUI extends JFrame {
 		tabs.addTab("Update", updateIcon, updatePanel);
 
 		createAndShowGUI(tabs);
+		
+		int response = JOptionPane.showConfirmDialog(this, "Would you like to load a new database?", "Database Update", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+		if (response == JOptionPane.YES_OPTION) {
+			JFrame file = new FileUpdateFrame(GUI.this);
+			file.setVisible(true);
+		} else {
+			loadDatabase();
+		}
 	}
 
 	public void loadDatabase() {
 		students = new BinaryTree<String, Student>();
 
-		KeyGenerator keygen = null;
-		try {
-			keygen = KeyGenerator.getInstance("DES");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-		keygen.init(new SecureRandom(new byte[] { 1, 2, 3, 4, 5 })); // 100%
-																		// random
-																		// and
-																		// secure
-																		// key
-
-		FileIO.setKey(keygen.generateKey());
-
-		try {
-			FileIO.readCSV(students,
-					FileIO.readFormatSpecification(new File("config")),
-					FileIO.readEncrypted(new File("data")));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			// show update dialog
-		} catch (Exception e) {
-			e.printStackTrace();
+		int read = FileIO.readCSV(students, FileIO.readFormatSpecification(new File("config")), FileIO.readEncrypted(new File("data")));
+		if (read == -1) {
+			int response = JOptionPane.showConfirmDialog(this, "No database file was fonud. Would you like to load a database?", "Database Update", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+			if (response == JOptionPane.YES_OPTION) {
+				JFrame file = new FileUpdateFrame(GUI.this);
+				file.setVisible(true);
+			}
 		}
 	}
 
@@ -337,7 +336,7 @@ public class GUI extends JFrame {
 		// Display the window.
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(screenWidth, screenHeight);
-		//this.pack();
+//		this.pack();
 		this.setVisible(true);
 	}
 
