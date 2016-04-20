@@ -34,9 +34,9 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
 /**
- * GUI
+ * Main program and GUI for the student password lookup
  * @author Tony Wu
- * @version 0.1
+ * @version April 2016
  */
 
 public class GUI extends JFrame {
@@ -267,8 +267,6 @@ public class GUI extends JFrame {
 		SwingUtilities.updateComponentTreeUI(searchButton);
 		SwingUtilities.updateComponentTreeUI(searchField);
 		
-		System.out.println(title.getPreferredSize().getWidth());
-
 		// ARRANGE components
 		gl.setHorizontalGroup(gl.createSequentialGroup()
 				.addGap((screenWidth - (int)title.getPreferredSize().getWidth())/2)
