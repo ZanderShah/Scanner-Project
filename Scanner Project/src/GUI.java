@@ -108,7 +108,7 @@ public class GUI extends JFrame {
 
 		int read = FileIO.readCSV(students, FileIO.readFormatSpecification(new File("config")), FileIO.readEncrypted(new File("data")));
 		if (read == -1) {
-			int response = JOptionPane.showConfirmDialog(this, "No database file was fonud. Would you like to load a database?", "Database Update", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+			int response = JOptionPane.showConfirmDialog(this, "No database file was found. Would you like to load a database?", "Database Update", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 			if (response == JOptionPane.YES_OPTION) {
 				JFrame file = new FileUpdateFrame(GUI.this);
 				file.setVisible(true);
