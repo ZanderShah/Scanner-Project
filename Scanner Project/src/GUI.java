@@ -43,7 +43,7 @@ public class GUI extends JFrame {
 
 	Color accentGreen = new Color(124, 218, 52);
 	Color backgroundGrey = new Color(100, 100, 100);
-	Color foregroundGrey = new Color(150, 150, 150);
+	Color foregroundGrey = new Color(160, 160, 160);
 	Color foregroundLightGrey = new Color(180, 180, 180);
 	
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -339,8 +339,8 @@ public class GUI extends JFrame {
 		// SET component appearance
 		gl.setAutoCreateContainerGaps(true);
 		gl.setAutoCreateGaps(true);
-		searchField.setFont(new Font("Consolas", Font.BOLD, 24));
-		searchButton.setFont(new Font("Consolas", Font.BOLD, 24));
+		searchField.setFont(new Font("Consolas", Font.BOLD, 36));
+		searchButton.setFont(new Font("Consolas", Font.BOLD, 36));
 		// searchField.setOpaque(false);
 		searchField.setBorder(BorderFactory.createEmptyBorder());
 		searchButton.setBorder(BorderFactory.createEmptyBorder());
@@ -350,14 +350,14 @@ public class GUI extends JFrame {
 		UIManager.put("Button.highlight", backgroundGrey);
 		UIManager.put("TextField.caretForeground", Color.BLACK);
 		UIManager.put("TextField.inactiveBackground", foregroundGrey);
-
+		
 		SwingUtilities.updateComponentTreeUI(searchButton);
 		SwingUtilities.updateComponentTreeUI(searchField);
 
 		gl.setHorizontalGroup(gl.createSequentialGroup()
-				.addGap((screenWidth-200-120)/2)
-				.addComponent(searchField, 200, 200, 200)
-				.addComponent(searchButton, 120, 120, 120));
+				.addGap((screenWidth-201-180)/2)
+				.addComponent(searchField, 201, 201, 201)
+				.addComponent(searchButton, 180, 180, 180));
 
 		gl.setVerticalGroup(gl
 				.createSequentialGroup()
@@ -365,7 +365,7 @@ public class GUI extends JFrame {
 				.addGroup(
 						gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
 								.addComponent(searchField)
-								.addComponent(searchButton, 60, 60, 60)));
+								.addComponent(searchButton, 80, 80, 80)));
 
 		return p;
 	}
