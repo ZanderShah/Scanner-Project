@@ -19,13 +19,14 @@ import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
@@ -42,7 +43,7 @@ public class GUI extends JFrame {
 
 	Color accentGreen = new Color(124, 218, 52);
 	Color backgroundGrey = new Color(100, 100, 100);
-	Color foregroundGrey = new Color(150, 150, 150);
+	Color foregroundGrey = new Color(160, 160, 160);
 	Color foregroundLightGrey = new Color(180, 180, 180);
 	
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -66,33 +67,16 @@ public class GUI extends JFrame {
 		UIManager.put("TabbedPane.selected", backgroundGrey);
 		UIManager.put("TabbedPane.contentAreaColor", Color.BLACK);
 		UIManager.put("TabbedPane.background", Color.RED);
-		// UIManager.put("TabbedPane.shadow", Color.RED);
-		// UIManager.put("TabbedPane.borderColor", foregroundGrey);
 		UIManager.put("TabbedPane.darkShadow", backgroundGrey);
-		// UIManager.put("TabbedPane.light", Color.BLACK);
-		// UIManager.put("TabbedPane.highlight", Color.RED);
 		UIManager.put("TabbedPane.focus", accentGreen);
-		// UIManager.put("TabbedPane.unselectedBackground", Color.RED);
 		UIManager.put("TabbedPane.selectHighlight", Color.BLACK);
-		// UIManager.put("TabbedPane.tabAreaBackground", Color.RED);
 		UIManager.put("TabbedPane.borderHightlightColor", foregroundGrey);
 		UIManager.put("TabbedPane.contentBorderInsets", new Insets(0, 0, 0, 0));
 
 		SwingUtilities.updateComponentTreeUI(tabs);
-		// tabs.setForeground(new Color(0, 127, 47));
-
-		ImageIcon updateIcon = new ImageIcon("circular-arrow-1small.png");
-		ImageIcon searchIcon = new ImageIcon("loupesmall.png");
 
 		// Add Search Panel
-		JComponent searchPanel = createSearchPanel();
-		tabs.addTab("Search", searchIcon, searchPanel);
-
-		// Add Update Panel
-		JComponent updatePanel = createUpdatePanel();
-		tabs.addTab("Update", updateIcon, updatePanel);
-
-		createAndShowGUI(tabs);
+		createAndShowGUI(createSearchPanel());
 		
 		int response = JOptionPane.showConfirmDialog(this, "Would you like to load a new database?", "Database Update", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
 		if (response == JOptionPane.YES_OPTION) {
@@ -118,97 +102,10 @@ public class GUI extends JFrame {
 
 	Color c = new Color((int) (Math.random() * 255),
 			(int) (Math.random() * 255), (int) (Math.random() * 255));
-
-	String username = "Empty";
-
 	String query = "";
 
-	// boolean infoOpen = false;
-
-	// Create update layout
-	private JComponent createUpdatePanel() {
-		JPanel p = new JPanel(true);
-		GroupLayout gl = new GroupLayout(p);
-		p.setLayout(gl);
-		p.setBackground(backgroundGrey);
-
-		JButton quitButton = new JButton("Quit");
-		JButton updateButton = new JButton("Update Database");
-		JButton colorButton = new JButton("Change Color");
-		colorButton.setToolTipText("Changes the background colour");
-		JTextField usernameField = new JTextField("Username");
-		JLabel usernameLabel = new JLabel(username);
-
-		quitButton.addActionListener(new quitListener());
-		updateButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JFrame file = new FileUpdateFrame(GUI.this);
-				file.setVisible(true);
-			}
-
-		});
-		colorButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c = new Color((int) (Math.random() * 255),
-						(int) (Math.random() * 255),
-						(int) (Math.random() * 255));
-				p.setBackground(c);
-			}
-
-		});
-
-		// LAYOUT
-
-		gl.setAutoCreateContainerGaps(false);
-
-		gl.setHorizontalGroup(gl
-				.createSequentialGroup()
-				.addGroup(
-						gl.createSequentialGroup().addComponent(usernameLabel))
-				.addGap(10)
-				.addGroup(
-						gl.createParallelGroup(GroupLayout.Alignment.LEADING)
-								.addComponent(usernameField)
-								.addComponent(updateButton))
-				.addGap(5)
-				.addGroup(
-						gl.createParallelGroup(GroupLayout.Alignment.LEADING)
-								.addComponent(colorButton)
-								.addComponent(quitButton)).addGap(20)
-
-		);
-
-		gl.setVerticalGroup(gl
-				.createParallelGroup()
-				.addGap(0)
-				.addGroup(
-						gl.createSequentialGroup().addGap(50)
-								.addComponent(usernameLabel).addGap(50))
-				.addGroup(
-						gl.createSequentialGroup()
-								.addGap(5)
-								.addGroup(
-										gl.createParallelGroup(
-												GroupLayout.Alignment.BASELINE)
-												.addComponent(usernameField)
-												.addComponent(colorButton))
-								.addGap(5)
-								.addGroup(
-										gl.createParallelGroup(
-												GroupLayout.Alignment.BASELINE)
-												.addComponent(updateButton)
-												.addComponent(quitButton))
-								.addGap(20)));
-
-		return p;
-	}
-
 	// Create search layout
-	private JComponent createSearchPanel() {
+	private JPanel createSearchPanel() {
 		JPanel p = new JPanel(true);
 		GroupLayout gl = new GroupLayout(p);
 		p.setLayout(gl);
@@ -257,7 +154,7 @@ public class GUI extends JFrame {
 		searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				// check input
+				// Check input
 				if (searchField.getText().length() == 9
 						|| searchField.getText().length() == 10) {
 					if (searchField.getText().length() == 9) {
@@ -294,19 +191,41 @@ public class GUI extends JFrame {
 					               }
 					          };
 					    }.start();
-					    
-					    
 					} else {
-						JOptionPane.showMessageDialog(GUI.this,
-								"The student was not found in the database.",
-								"Error", JOptionPane.ERROR_MESSAGE);
-						searchField.setText("");
+						// Show error message for 2 seconds
+						JOptionPane err = new JOptionPane("The student was not found in the database.", JOptionPane.ERROR_MESSAGE);
+						JDialog d = err.createDialog(GUI.this, "Error");
+						new Thread() {
+							@Override
+							public void run() {
+								try {
+									Thread.sleep(2000);
+									d.dispose();
+									searchField.setText("");
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+							}
+						}.start();
+						d.setVisible(true);
 					}
 				} else {
-					JOptionPane.showMessageDialog(GUI.this,
-							"Student number must be 9 or 10 digits in length.",
-							"Error", JOptionPane.ERROR_MESSAGE);
-					searchField.setText("");
+					// Show error message for 2 seconds
+					JOptionPane err = new JOptionPane("Student number must be 9 or 10 digits in length.", JOptionPane.ERROR_MESSAGE);
+					JDialog d = err.createDialog(GUI.this, "Error");
+					new Thread() {
+						@Override
+						public void run() {
+							try {
+								Thread.sleep(2000);
+								d.dispose();
+								searchField.setText("");
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
+					}.start();
+					d.setVisible(true);
 				}
 			}
 
@@ -316,8 +235,8 @@ public class GUI extends JFrame {
 		// SET component appearance
 		gl.setAutoCreateContainerGaps(true);
 		gl.setAutoCreateGaps(true);
-		searchField.setFont(new Font("Consolas", Font.BOLD, 24));
-		searchButton.setFont(new Font("Consolas", Font.BOLD, 24));
+		searchField.setFont(new Font("Consolas", Font.BOLD, 36));
+		searchButton.setFont(new Font("Consolas", Font.BOLD, 36));
 		// searchField.setOpaque(false);
 		searchField.setBorder(BorderFactory.createEmptyBorder());
 		searchButton.setBorder(BorderFactory.createEmptyBorder());
@@ -327,14 +246,14 @@ public class GUI extends JFrame {
 		UIManager.put("Button.highlight", backgroundGrey);
 		UIManager.put("TextField.caretForeground", Color.BLACK);
 		UIManager.put("TextField.inactiveBackground", foregroundGrey);
-
+		
 		SwingUtilities.updateComponentTreeUI(searchButton);
 		SwingUtilities.updateComponentTreeUI(searchField);
 
 		gl.setHorizontalGroup(gl.createSequentialGroup()
-				.addGap((screenWidth-200-120)/2)
-				.addComponent(searchField, 200, 200, 200)
-				.addComponent(searchButton, 120, 120, 120));
+				.addGap((screenWidth-201-180)/2)
+				.addComponent(searchField, 201, 201, 201)
+				.addComponent(searchButton, 180, 180, 180));
 
 		gl.setVerticalGroup(gl
 				.createSequentialGroup()
@@ -342,24 +261,27 @@ public class GUI extends JFrame {
 				.addGroup(
 						gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
 								.addComponent(searchField)
-								.addComponent(searchButton, 60, 60, 60)));
+								.addComponent(searchButton, 80, 80, 80)));
 
 		return p;
 	}
 
-	private void createAndShowGUI(JComponent tabs) {
+	private void createAndShowGUI(JPanel search) {
 		// Create and set up the window.
-		// JFrame frame = new JFrame("Student Database");
 		this.setTitle("Student Database");
 		this.setUndecorated(true);
 
-		// frame.add(tabs, BorderLayout.CENTER);
-		this.add(tabs, BorderLayout.CENTER);
+		JLabel title = new JLabel("Student Password Lookup", SwingConstants.CENTER);
+		title.setFont(title.getFont().deriveFont(64.0f));
+		title.setBackground(backgroundGrey);
+		title.setForeground(Color.BLACK);
+		title.setOpaque(true);
+		this.add(title, BorderLayout.NORTH);
+		this.add(search, BorderLayout.CENTER);
 
 		// Display the window.
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(screenWidth, screenHeight);
-//		this.pack();
 		this.setVisible(true);
 	}
 	
@@ -368,8 +290,7 @@ public class GUI extends JFrame {
 	// Create Student Information Frame
 	private JFrame createInfoFrame(Student s) {
 		
-
-		// data labels
+		// Data labels
 		JLabel nameLabel = new JLabel(s.getFirst() + " " + s.getLast());
 		nameLabel.setForeground(Color.WHITE);
 		nameLabel.setFont(new Font("Calibri", Font.BOLD, 20));
@@ -392,7 +313,7 @@ public class GUI extends JFrame {
 		emailLabel2.setForeground(Color.WHITE);
 		emailLabel2.setFont(new Font("Calibri", Font.PLAIN, 16));
 
-		// regular labels
+		// Regular labels
 		JLabel studentNoLabel1 = new JLabel("Student No.");
 		studentNoLabel1.setForeground(foregroundLightGrey);
 		studentNoLabel1.setFont(new Font("Calibri", Font.BOLD, 16));
@@ -441,6 +362,7 @@ public class GUI extends JFrame {
 
 		gl.setVerticalGroup(gl.createSequentialGroup()
 				.addComponent(nameLabel)
+				.addGap(10)
 				.addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(studentNoLabel1)
 						.addComponent(studentNoLabel2))
@@ -460,10 +382,11 @@ public class GUI extends JFrame {
 						.addComponent(emailLabel1)
 						.addComponent(emailLabel2)));
 
+		ImageIcon infoIcon = new ImageIcon("open-envelopesmall2.png");
 		JFrame infoFrame = new JFrame("Student Information");
+		infoFrame.setIconImage(infoIcon.getImage());
 		
 		infoFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		// infoFrame.setSize(400, 300);
 		infoFrame.add(p);
 		infoFrame.pack();
 		infoFrame.setLocation((screenWidth-infoFrame.getWidth())/2, (screenHeight-infoFrame.getHeight())/2);
@@ -471,15 +394,9 @@ public class GUI extends JFrame {
 
 		return infoFrame;
 	}
-
 	public static void main(String[] args) {
 		// Schedule a job for the event-dispatching thread:
 		// creating and showing this application's GUI.
-		// javax.swing.SwingUtilities.invokeLater(new Runnable() {
-		// public void run() {
-		// GUI a = new GUI();
-		// }
-		// });
 		GUI g = new GUI();
 		g.setVisible(true);
 	}

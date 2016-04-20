@@ -8,14 +8,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
-import javax.crypto.NoSuchPaddingException;
 
 /**
  * Provides utility methods for interacting with files
@@ -97,6 +94,7 @@ public class FileIO {
 	 */
 	public static InputStream readEncrypted(File f) {
 		try {
+			// Attempt to open and return a cipher input stream
 			Cipher c = Cipher.getInstance("DES/ECB/PKCS5Padding");
 			c.init(Cipher.DECRYPT_MODE, k);
 			CipherInputStream cis = new CipherInputStream(new FileInputStream(f), c);
@@ -115,11 +113,13 @@ public class FileIO {
 	 */
 	public static boolean encryptFile(File in, File out) {
 		try {
+			// Open all file streams
 			FileInputStream fis = new FileInputStream(in);
 			Cipher c = Cipher.getInstance("DES/ECB/PKCS5Padding");
 			c.init(Cipher.ENCRYPT_MODE, k);
 			CipherOutputStream cos = new CipherOutputStream(new FileOutputStream(out), c);
 			
+			// Copy data
 			int read = 0;
 			while ((read = fis.read()) != -1) {
 				cos.write(read);
@@ -148,7 +148,7 @@ public class FileIO {
 		PrintWriter pw;
 		try {
 			pw = new PrintWriter(f);
-		
+			
 			pw.println(fs.getDefinitions().length);
 			for (int i = 0; i < fs.getDefinitions().length; i++) {
 				pw.println(fs.getDefinitions()[i]);
