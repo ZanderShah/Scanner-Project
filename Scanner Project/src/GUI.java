@@ -20,6 +20,7 @@ import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -294,19 +295,41 @@ public class GUI extends JFrame {
 					               }
 					          };
 					    }.start();
-					    
-					    
 					} else {
-						JOptionPane.showMessageDialog(GUI.this,
-								"The student was not found in the database.",
-								"Error", JOptionPane.ERROR_MESSAGE);
-						searchField.setText("");
+						// Show error message for 2 seconds
+						JOptionPane err = new JOptionPane("The student was not found in the database.", JOptionPane.ERROR_MESSAGE);
+						JDialog d = err.createDialog(GUI.this, "Error");
+						new Thread() {
+							@Override
+							public void run() {
+								try {
+									Thread.sleep(2000);
+									d.dispose();
+									searchField.setText("");
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+							}
+						}.start();
+						d.setVisible(true);
 					}
 				} else {
-					JOptionPane.showMessageDialog(GUI.this,
-							"Student number must be 9 or 10 digits in length.",
-							"Error", JOptionPane.ERROR_MESSAGE);
-					searchField.setText("");
+					// Show error message for 2 seconds
+					JOptionPane err = new JOptionPane("Student number must be 9 or 10 digits in length.", JOptionPane.ERROR_MESSAGE);
+					JDialog d = err.createDialog(GUI.this, "Error");
+					new Thread() {
+						@Override
+						public void run() {
+							try {
+								Thread.sleep(2000);
+								d.dispose();
+								searchField.setText("");
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
+					}.start();
+					d.setVisible(true);
 				}
 			}
 
@@ -474,7 +497,6 @@ public class GUI extends JFrame {
 
 		return infoFrame;
 	}
-
 	public static void main(String[] args) {
 		// Schedule a job for the event-dispatching thread:
 		// creating and showing this application's GUI.

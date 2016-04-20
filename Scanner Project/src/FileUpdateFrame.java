@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -38,22 +37,27 @@ public class FileUpdateFrame extends JFrame {
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 		
-		JPanel columnSelection = new JPanel();
-		columnSelection.setLayout(new BorderLayout());
-		JPanel dropDown = new JPanel();
-		dropDown.setLayout(new GridLayout());
-		
+		// File selection
 		JPanel fileSelect = new JPanel();
 		fileSelect.setLayout(new FlowLayout());
 		JFileChooser jfc = new JFileChooser();
 		JLabel currentFile = new JLabel("Current file: ");
 		JButton select = new JButton("Choose file...");
 		
+		// Field definitions and data preview
+		JPanel columnSelection = new JPanel();
+		columnSelection.setLayout(new BorderLayout());
+		JPanel dropDown = new JPanel();
+		dropDown.setLayout(new GridLayout());
+		
+		// Handler for selecting a file
 		select.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int status = jfc.showOpenDialog(FileUpdateFrame.this);
 				if (status == JFileChooser.APPROVE_OPTION) {
+					
+					// Update drop down field choosers
 					selectedFile = jfc.getSelectedFile();
 					currentFile.setText("Current file: " + selectedFile.getPath());
 					columnSelection.removeAll();
@@ -65,6 +69,7 @@ public class FileUpdateFrame extends JFrame {
 					}
 					columnSelection.add(dropDown, BorderLayout.NORTH);
 
+					// Update the table showing preview data
 					String[][] previewData = new String[4][numCols];
 					try {
 						BufferedReader br = new BufferedReader(new FileReader(selectedFile));
@@ -92,6 +97,12 @@ public class FileUpdateFrame extends JFrame {
 				}
 			}
 			
+			/**
+			 * Utility method to count max columns in a CSV file
+			 * 
+			 * @param selectedFile The file to count columns of
+			 * @return When interpreted as a CSV, the maximum number of columns in a record
+			 */
 			private int countColumns(File selectedFile) {
 				try {
 					int cols = 0;
@@ -110,6 +121,12 @@ public class FileUpdateFrame extends JFrame {
 				return 0;
 			}
 			
+			/**
+			 * Utility to create a drop down menu for choosing field type
+			 * 
+			 * @param initialValue The value to start the drop down at
+			 * @return The drop down menu object created
+			 */
 			private JComboBox<String> makeDropDown(int initialValue) {
 				
 				String[] options = { "Username", "First Name", "Last Name", "Grade", "Homeroom", "Password", "Email", "Address", 
@@ -122,6 +139,7 @@ public class FileUpdateFrame extends JFrame {
 		fileSelect.add(select);
 		fileSelect.add(currentFile);
 		
+		// Options for importing the file
 		JPanel options = new JPanel();
 		options.setLayout(new GridLayout());
 		
@@ -138,15 +156,19 @@ public class FileUpdateFrame extends JFrame {
 		checkBoxPanel.add(delete);
 		options.add(checkBoxPanel);
 		
+		// Handles when the file is saved and imported
 		JButton save = new JButton("Save");
 		save.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				
+				// Build the format specification
 				int[] fields = new int[columns.size()];
 				for (int i = 0; i < columns.size(); i++) {
 					fields[i] = columns.get(i).getSelectedIndex();
 				}
 				
+				// If the skip lines is invalid, abort 
 				int lines = 0;
 				try {
 					lines = Integer.parseInt(lineSkip.getText());
@@ -154,20 +176,22 @@ public class FileUpdateFrame extends JFrame {
 					JOptionPane.showMessageDialog(FileUpdateFrame.this, "Invalid number of skipped lines.");
 					return;
 				}
-				
 				FormatSpecification fs = new FormatSpecification(fields, lines);
 				
+				// If no file is selected, abort saving
 				if (selectedFile == null) {
 					JOptionPane.showMessageDialog(FileUpdateFrame.this, "No file was selected", "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
+				// Attempt to save the format specification and data files
 				if (!FileIO.saveFormatSpecification(new File("config"), fs) ||
 						!FileIO.encryptFile(selectedFile, new File("data"))) {
 					JOptionPane.showMessageDialog(FileUpdateFrame.this, "There was an error saving the file", "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
+				// If requested, attempt to delete the source
 				if (delete.isSelected()) {
 					try {
 						Files.delete(selectedFile.toPath());
@@ -176,6 +200,7 @@ public class FileUpdateFrame extends JFrame {
 					}
 				}
 				
+				// Reload the files in the main program
 				gui.loadDatabase();
 				
 				dispose();
