@@ -94,6 +94,9 @@ public class GUI extends JFrame {
 		}
 	}
 
+	/**
+	 * Loads the database into the program from data files
+	 */
 	public void loadDatabase() {
 		students = new BinaryTree<String, Student>();
 
@@ -115,7 +118,10 @@ public class GUI extends JFrame {
 
 	
 	
-	// Create search layout
+	/**
+	 * Create search layout
+	 * @return The newly created panel
+	 */
 	private JPanel createSearchPanel() {
 		JPanel p = new JPanel(true);
 		GroupLayout gl = new GroupLayout(p);
@@ -295,17 +301,14 @@ public class GUI extends JFrame {
 		return p;
 	}
 
+	/**
+	 * Creates the GUI given the search panel, and displays it
+	 * @param search The search panel
+	 */
 	private void createAndShowGUI(JPanel search) {
 		// Create and set up the window.
 		this.setTitle("Student Database");
 		this.setUndecorated(true);
-
-		/*JLabel title = new JLabel("Student Password Lookup", SwingConstants.CENTER);
-		title.setFont(new Font("Rockwell", Font.PLAIN, 36));
-		title.setBackground(backgroundGrey);
-		title.setForeground(Color.BLACK);
-		title.setOpaque(true);
-		this.add(title, BorderLayout.NORTH);*/
 		this.add(search, BorderLayout.CENTER);
 
 		// Display the window.
@@ -323,7 +326,11 @@ public class GUI extends JFrame {
 	
 	
 
-	// Create Student Information Frame
+	/**
+	 * Creates an info frame for the given student
+	 * @param s The student to show info for
+	 * @return The newly created frame containing student info
+	 */
 	private JFrame createInfoFrame(Student s) {
 		
 		// Data labels
@@ -430,9 +437,9 @@ public class GUI extends JFrame {
 
 		return infoFrame;
 	}
+	
 	public static void main(String[] args) {
-		// Schedule a job for the event-dispatching thread:
-		// creating and showing this application's GUI.
+		// Create the GUI and display it
 		GUI g = new GUI();
 		g.setVisible(true);
 	}
