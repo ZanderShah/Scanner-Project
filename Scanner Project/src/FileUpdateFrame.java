@@ -3,6 +3,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -20,6 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * A JFrame for loading a CSV file as the database, as well as specifying it's format
@@ -34,6 +37,8 @@ public class FileUpdateFrame extends JFrame {
 	public FileUpdateFrame(GUI gui) {
 		this.setAlwaysOnTop(true);
 		
+		this.setTitle("Update Database");
+		
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 		
@@ -41,6 +46,7 @@ public class FileUpdateFrame extends JFrame {
 		JPanel fileSelect = new JPanel();
 		fileSelect.setLayout(new FlowLayout());
 		JFileChooser jfc = new JFileChooser();
+		jfc.setFileFilter(new FileNameExtensionFilter("CSV File", "csv"));
 		JLabel currentFile = new JLabel("Current file: ");
 		JButton select = new JButton("Choose file...");
 		
@@ -147,6 +153,7 @@ public class FileUpdateFrame extends JFrame {
 		lineSkipPanel.setLayout(new GridLayout());
 		lineSkipPanel.add(new JLabel("Skip lines: "));
 		JTextField lineSkip = new JTextField("0");
+		lineSkip.setToolTipText("Use this to skip titles or blank lines at the beginning of the file");
 		lineSkipPanel.add(lineSkip);
 		options.add(lineSkipPanel);
 		
@@ -199,8 +206,8 @@ public class FileUpdateFrame extends JFrame {
 						JOptionPane.showMessageDialog(FileUpdateFrame.this, "The source file could not be deleted", "Warning", JOptionPane.WARNING_MESSAGE);
 					}
 				}
-				
-				// Reload the files in the main program
+
+				// Reload the new files in the main program
 				gui.loadDatabase();
 				
 				dispose();
@@ -213,6 +220,21 @@ public class FileUpdateFrame extends JFrame {
 		mainPanel.add(options, BorderLayout.SOUTH);
 		
 		setContentPane(mainPanel);
+		
+		this.addWindowListener(new WindowListener() {
+
+			public void windowClosing(WindowEvent arg0) {
+				// When this windows is closed, reload the files in the main program
+				gui.loadDatabase();
+			}
+			
+			public void windowActivated(WindowEvent arg0) {}
+			public void windowClosed(WindowEvent arg0) {}
+			public void windowDeactivated(WindowEvent arg0) {}
+			public void windowDeiconified(WindowEvent arg0) {}
+			public void windowIconified(WindowEvent arg0) {}
+			public void windowOpened(WindowEvent arg0) {}
+		});
 		
 		pack();
 	}
