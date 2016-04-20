@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
@@ -32,6 +33,12 @@ import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
+/**
+ * GUI
+ * @author Tony Wu
+ * @version 0.1
+ */
+
 public class GUI extends JFrame {
 
 	private BinaryTree<String, Student> students;
@@ -42,8 +49,8 @@ public class GUI extends JFrame {
 	 */
 
 	Color accentGreen = new Color(124, 218, 52);
-	Color backgroundGrey = new Color(100, 100, 100);
-	Color foregroundGrey = new Color(160, 160, 160);
+	Color backgroundGrey = new Color(80, 80, 80);
+	Color foregroundGrey = new Color(140, 140, 140);
 	Color foregroundLightGrey = new Color(180, 180, 180);
 	
 	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -103,18 +110,25 @@ public class GUI extends JFrame {
 	Color c = new Color((int) (Math.random() * 255),
 			(int) (Math.random() * 255), (int) (Math.random() * 255));
 	String query = "";
+	
+	JTextField searchField = new JTextField();
 
+	
+	
 	// Create search layout
 	private JPanel createSearchPanel() {
 		JPanel p = new JPanel(true);
 		GroupLayout gl = new GroupLayout(p);
 		p.setLayout(gl);
 		p.setBackground(backgroundGrey);
-
+		
+		
 		// Init Components
-		JTextField searchField = new JTextField();
-		JButton searchButton = new JButton("Search");
+
+		JButton searchButton = new JButton("Search:");
 		searchButton.setMnemonic(KeyEvent.VK_ENTER);
+		JLabel title = new JLabel("Student Password Lookup", SwingConstants.CENTER);
+		
 
 		boolean[] selected = new boolean[1];
 		selected[0] = false;
@@ -233,35 +247,52 @@ public class GUI extends JFrame {
 
 		// LAYOUT
 		// SET component appearance
-		gl.setAutoCreateContainerGaps(true);
-		gl.setAutoCreateGaps(true);
+		gl.setAutoCreateContainerGaps(false);
+		gl.setAutoCreateGaps(false);
 		searchField.setFont(new Font("Consolas", Font.BOLD, 36));
-		searchButton.setFont(new Font("Consolas", Font.BOLD, 36));
+		searchButton.setFont(new Font("Rockwell", Font.PLAIN, 40));
+		title.setFont(new Font("Rockwell", Font.PLAIN, 40));
 		// searchField.setOpaque(false);
 		searchField.setBorder(BorderFactory.createEmptyBorder());
 		searchButton.setBorder(BorderFactory.createEmptyBorder());
 		searchButton.setBackground(foregroundGrey);
-		searchButton.setForeground(backgroundGrey);
+		searchButton.setForeground(Color.WHITE);
+		title.setForeground(Color.WHITE);
 		UIManager.put("Button.select", accentGreen);
 		UIManager.put("Button.highlight", backgroundGrey);
 		UIManager.put("TextField.caretForeground", Color.BLACK);
 		UIManager.put("TextField.inactiveBackground", foregroundGrey);
-		
+
+		// ADD compoment properties
 		SwingUtilities.updateComponentTreeUI(searchButton);
 		SwingUtilities.updateComponentTreeUI(searchField);
+		
+		System.out.println(title.getPreferredSize().getWidth());
 
+		// ARRANGE components
 		gl.setHorizontalGroup(gl.createSequentialGroup()
-				.addGap((screenWidth-201-180)/2)
-				.addComponent(searchField, 201, 201, 201)
-				.addComponent(searchButton, 180, 180, 180));
+				.addGap((screenWidth - (int)title.getPreferredSize().getWidth())/2)
+				.addGroup(gl.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(title)
+						.addGroup(gl.createSequentialGroup()
+							.addComponent(searchButton, 180, 180, 180)
+							.addGap(15)
+							.addComponent(searchField, 201, 201, 201)
+						)
+				)
+		);
 
 		gl.setVerticalGroup(gl
 				.createSequentialGroup()
-				.addGap(Math.min(screenHeight/2, 200))
+				.addGap(20)
+				.addComponent(title)
+				.addGap(200)
 				.addGroup(
 						gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
 								.addComponent(searchField)
 								.addComponent(searchButton, 80, 80, 80)));
+		
+		searchField.requestFocus();
 
 		return p;
 	}
@@ -271,18 +302,25 @@ public class GUI extends JFrame {
 		this.setTitle("Student Database");
 		this.setUndecorated(true);
 
-		JLabel title = new JLabel("Student Password Lookup", SwingConstants.CENTER);
-		title.setFont(title.getFont().deriveFont(64.0f));
+		/*JLabel title = new JLabel("Student Password Lookup", SwingConstants.CENTER);
+		title.setFont(new Font("Rockwell", Font.PLAIN, 36));
 		title.setBackground(backgroundGrey);
 		title.setForeground(Color.BLACK);
 		title.setOpaque(true);
-		this.add(title, BorderLayout.NORTH);
+		this.add(title, BorderLayout.NORTH);*/
 		this.add(search, BorderLayout.CENTER);
 
 		// Display the window.
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(screenWidth, screenHeight);
+		searchField.grabFocus();
 		this.setVisible(true);
+		
+		this.addWindowListener( new WindowAdapter () {
+			public void windowActivated( WindowEvent e ){
+		    	searchField.requestFocusInWindow();
+			}
+		}); 
 	}
 	
 	
