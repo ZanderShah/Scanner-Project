@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * A JFrame for loading a CSV file as the database, as well as specifying it's format
@@ -34,6 +35,8 @@ public class FileUpdateFrame extends JFrame {
 	public FileUpdateFrame(GUI gui) {
 		this.setAlwaysOnTop(true);
 		
+		this.setTitle("Update Database");
+		
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 		
@@ -41,6 +44,7 @@ public class FileUpdateFrame extends JFrame {
 		JPanel fileSelect = new JPanel();
 		fileSelect.setLayout(new FlowLayout());
 		JFileChooser jfc = new JFileChooser();
+		jfc.setFileFilter(new FileNameExtensionFilter("CSV File", "csv"));
 		JLabel currentFile = new JLabel("Current file: ");
 		JButton select = new JButton("Choose file...");
 		
