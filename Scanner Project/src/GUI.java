@@ -26,6 +26,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
@@ -73,9 +74,6 @@ public class GUI extends JFrame {
 		UIManager.put("TabbedPane.contentBorderInsets", new Insets(0, 0, 0, 0));
 
 		SwingUtilities.updateComponentTreeUI(tabs);
-
-		ImageIcon updateIcon = new ImageIcon("circular-arrow-1small.png");
-		ImageIcon searchIcon = new ImageIcon("loupesmall.png");
 
 		// Add Search Panel
 		createAndShowGUI(createSearchPanel());
@@ -273,6 +271,12 @@ public class GUI extends JFrame {
 		this.setTitle("Student Database");
 		this.setUndecorated(true);
 
+		JLabel title = new JLabel("Student Password Lookup", SwingConstants.CENTER);
+		title.setFont(title.getFont().deriveFont(64.0f));
+		title.setBackground(backgroundGrey);
+		title.setForeground(Color.BLACK);
+		title.setOpaque(true);
+		this.add(title, BorderLayout.NORTH);
 		this.add(search, BorderLayout.CENTER);
 
 		// Display the window.
