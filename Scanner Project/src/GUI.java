@@ -97,7 +97,7 @@ public class GUI extends JFrame {
 	public void loadDatabase() {
 		students = new BinaryTree<String, Student>();
 
-		int read = FileIO.readCSV(students, FileIO.readFormatSpecification(new File("config")), FileIO.readEncrypted(new File("data")));
+		int read = FileIO.readCSV(students, FileIO.readFormatSpecification(new File("dat/config")), FileIO.readEncrypted(new File("dat/data")));
 		if (read == -1) {
 			int response = JOptionPane.showConfirmDialog(this, "No database file was found. Would you like to load a database?", "Database Update", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 			if (response == JOptionPane.YES_OPTION) {
@@ -418,7 +418,7 @@ public class GUI extends JFrame {
 						.addComponent(emailLabel1)
 						.addComponent(emailLabel2)));
 
-		ImageIcon infoIcon = new ImageIcon("open-envelopesmall2.png");
+		ImageIcon infoIcon = new ImageIcon("img/open-envelopesmall.png");
 		JFrame infoFrame = new JFrame("Student Information");
 		infoFrame.setIconImage(infoIcon.getImage());
 		
