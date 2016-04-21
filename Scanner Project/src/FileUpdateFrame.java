@@ -192,8 +192,8 @@ public class FileUpdateFrame extends JFrame {
 				}
 				
 				// Attempt to save the format specification and data files
-				if (!FileIO.saveFormatSpecification(new File("config"), fs) ||
-						!FileIO.encryptFile(selectedFile, new File("data"))) {
+				if (!FileIO.saveFormatSpecification(new File("dat/config"), fs) ||
+						!FileIO.encryptFile(selectedFile, new File("dat/data"))) {
 					JOptionPane.showMessageDialog(FileUpdateFrame.this, "There was an error saving the file", "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
