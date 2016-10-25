@@ -1,4 +1,4 @@
 Scanner Project
 ===============
 
-A project for the Richmond Hill High School library which works with their barcode scanners to access a database of students for uses such as password recorvery.
+For Richmond Hill HS library. Allows Richmond Hill HS students to scan their ID cards ot look up credentials. Reads data from CSV and securely stores with Java crypto.
